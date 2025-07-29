@@ -1,0 +1,77 @@
+
+/********************************************************************************/
+
+:root {
+    --serif-font: "PT Serif", serif;
+    --sans-font: "Open Sans", sans-serif;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--sans-font);
+}
+
+/********************************************************************************/
+
+header {
+    padding: 3rem 0 0 0;
+    color: #EEE;
+    background-color: #111;
+}
+
+.logo {
+    padding: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.logo h1 {
+    font-family: var(--serif-font);
+}
+
+.logo img {
+    height: 2rem;
+    width: auto;
+}
+
+nav {
+    color: #EEE;
+    background-color: #222;
+    display: flex;
+    justify-content: center;
+}
+
+nav a {
+    padding: 1rem;
+    color: #EEE;
+    text-decoration: none;
+}
+
+nav a:visited {
+    color: #EEE;
+}
+
+nav a:hover {
+    background-color: #444;
+}
+
+main {
+    height: 100vh;
+    color: #EEE;
+    background-color: #333;
+}
+
+footer {
+    padding: 3rem;
+    color: #EEE;
+    background-color: #111;
+    text-align: center;
+}
+
+/********************************************************************************/
