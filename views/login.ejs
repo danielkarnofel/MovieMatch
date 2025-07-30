@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Screen</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <%- include("partials/navbar.ejs") %>
+    
+    <h1> Login </h1>
+
+    <% if(isAuthenticated) { %>
+        <h2> You are already logged in! </h2>
+    <% } else { %> 
+        <form method="POST" action="/login">
+            Username: 
+            <input type="text" name="username"><br><br>
+            Password: 
+            <input type="password" name="password"><br><br>
+            <button> Login </button>
+        </form>
+    <% } %>
+    <br>
+
+    <% if (typeof(error) != "undefined") { %> 
+        <%= error %>
+      <% } %>
+
+</body>
+</html>
