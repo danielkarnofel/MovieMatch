@@ -1,24 +1,110 @@
-
+/********************************************************************************/
+/* Global Styles */
 /********************************************************************************/
 
 :root {
-    
+
 }
 
 *, *::before, *::after {
-    /* box-sizing: border-box;
+    box-sizing: border-box;
     margin: 0;
-    padding: 0; */
+    padding: 0;
 }
 
 body {
+    background-color: #EEE;
+}
+
+/********************************************************************************/
+/* Typography */
+/********************************************************************************/
+
+/********************************************************************************/
+/* Header */
+/********************************************************************************/
+
+header {
+    color: #EEE;
+    background-color: #222;
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.logo {
+    color: #EEE;
+    text-decoration: none;
+    display: flex;
+    gap: 0.1rem;
+    justify-content: center;
+    align-items: center;
     
 }
 
+.logo img {
+    height: 2rem;
+    padding: 0 0 0.1rem 0;
+}
+
+.account {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.account a {
+    color: #EEE;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 1rem;
+}
+
+.account a:hover {
+    background-color: #444;
+}
+
+/********************************************************************************/
+/*  */
 /********************************************************************************/
 
 main {
-    
+    color: #DDD;
+    background-color: #333;
+    min-height: 100vh;
+}
+
+.scroll-container {
+    display: flex;
+    overflow: auto;
+    gap: 1rem;
+    padding: 1rem;
+}
+
+.movie-card {
+    flex: 0 0 auto;
+    width: 160px;
+    background-color: #DDD;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.movie-card img {
+    width: 100%;
+    border-radius: 4px;
 }
 
 /********************************************************************************/
+/* Footer */
+/********************************************************************************/
+
+footer {
+    color: #EEE;
+    background-color: #222;
+    text-align: center;
+    padding: 2rem;
+}

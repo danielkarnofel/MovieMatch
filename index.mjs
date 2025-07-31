@@ -36,7 +36,13 @@ app.get("/dbTest", async(req, res) => {
 });
 
 app.get("/apiTest", async(req, res) => {
-    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&query=test`;
+    
+    // This provides API configuration info like query parameters and image sizes
+    // const url = `https://api.themoviedb.org/3/configuration?api_key=${apiKey}&query=test`;
+
+    // List of genres
+    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&query=test`;
+
     const response = await fetch(url);
     const data = await response.json();
     res.send(data);

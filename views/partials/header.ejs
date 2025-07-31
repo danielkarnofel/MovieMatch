@@ -1,4 +1,17 @@
 <header>
-    <h1>MovieMatch</h1>
-    <%- include('nav.ejs') %>
+    
+    <a class="logo" href="/">
+        <h1>MovieMatch</h1><img src="img/fire.svg">
+    </a>
+
+    <!-- User is not signed in -->
+    <span class="account">
+        <a href="/login">Login</a><a href="/signUp">Sign Up</a>
+    </span>
+
+    <!-- User is signed in -->
+    <!-- <span class="account">
+        <a href="/profile"><img src="img/account.svg"></a><a href="/">Logout</a>
+    </span> -->
+
 </header>

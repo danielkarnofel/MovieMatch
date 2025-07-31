@@ -3,20 +3,22 @@
 <%- include('partials/head.ejs') %>
 <body>
 <%- include('partials/header.ejs') %>
-<hr>
+
 <main>
+
+    <!-- <%console.log(popularMovies.results[0]);%> -->
 
     <section>
         <h1>Popular Movies</h1>
-        <div>
-            <ol>
+        <div class="scroll-container">
             <% for (let i = 0; i < 5; i++) { %>
-                <li><%= popularMovies.results[i].title %></li>
+                <div class="movie-card">
+                    <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" alt="Movie poster">
+                </div>
             <% } %>
-            </ol>
         </div>
     </section>
-
+    <hr>
     <section>
         <h1>Movie Search</h1>
         <form>
@@ -26,7 +28,7 @@
     </section>
 
 </main>
-<hr>
+
 <%- include('partials/footer.ejs') %>
 </body>
 </html>
