@@ -44,4 +44,17 @@ app.get("/apiTest", async(req, res) => {
 
 app.listen(3000, ()=>{
     console.log("Express server running")
-})
+}) 
+
+// clean up after shutdown
+process.on('SIGINT', async () => {
+    try {
+        console.log('\nShutting down server...');
+        await pool.end();  // Close MySQL pool
+        console.log('Database pool closed.');
+        process.exit(0);
+    } catch (err) {
+        console.error('Error closing the database pool:', err);
+        process.exit(1);
+    }
+});
