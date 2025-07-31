@@ -26,9 +26,17 @@ app.get('/', (req, res) => {
 });
 
 app.get("/dbTest", async(req, res) => {
-    let sql = "SELECT CURDATE()";
+    const sql = "SELECT CURDATE()";
     const [rows] = await conn.query(sql);
     res.send(rows);
+});
+
+app.get("/apiTest", async(req, res) => {
+    const apiKey = `715c996185f334cb145e6bc6b7859540`;
+    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&query=test`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.send(data);
 });
 
 app.listen(3000, ()=>{
