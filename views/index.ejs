@@ -6,9 +6,30 @@
 
 <main>
 
-    <!-- <%console.log(popularMovies.results[0]);%> -->
+    <section class="container">
+        <h1>Daily Recommendation</h1>
+        <div class="movie-card" id="daily-recommendation">
+            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[0].poster_path %>" alt="Movie poster">
+        </div>
+    </section>
 
-    <section>
+    <section class="container">
+        <h1>Moods</h1>
+        <div class="mood-container">
+            <div class="mood">
+                <a href="/">Feel-good</a>
+            </div>
+            <div class="mood">
+                <a href="/">Mind-bending</a>
+            </div>
+            <div class="mood">
+                <a href="/">Emotional</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- <%console.log(popularMovies.results[0]);%> -->
+    <!-- <section>
         <h1>Popular Movies</h1>
         <div class="scroll-container">
             <% for (let i = 0; i < 5; i++) { %>
@@ -25,7 +46,7 @@
             <input type="text" name="movieSearch">
             <button>Search</button>
         </form>
-    </section>
+    </section> -->
 
 </main>
 
