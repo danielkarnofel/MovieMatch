@@ -2,6 +2,7 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 
 const app = express();
+const apiKey = `715c996185f334cb145e6bc6b7859540`;
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -21,8 +22,11 @@ const pool = mysql.createPool({
 const conn = await pool.getConnection();
 
 //routes
-app.get('/', (req, res) => {
-   res.render('index');
+app.get('/', async (req, res) => {
+    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    res.render('index', {"popularMovies": data});
 });
 
 app.get("/dbTest", async(req, res) => {
@@ -32,7 +36,6 @@ app.get("/dbTest", async(req, res) => {
 });
 
 app.get("/apiTest", async(req, res) => {
-    const apiKey = `715c996185f334cb145e6bc6b7859540`;
     const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}&query=test`;
     const response = await fetch(url);
     const data = await response.json();

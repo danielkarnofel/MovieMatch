@@ -3,9 +3,30 @@
 <%- include('partials/head.ejs') %>
 <body>
 <%- include('partials/header.ejs') %>
+<hr>
 <main>
-    
+
+    <section>
+        <h1>Popular Movies</h1>
+        <div>
+            <ol>
+            <% for (let i = 0; i < 5; i++) { %>
+                <li><%= popularMovies.results[i].title %></li>
+            <% } %>
+            </ol>
+        </div>
+    </section>
+
+    <section>
+        <h1>Movie Search</h1>
+        <form>
+            <input type="text" name="movieSearch">
+            <button>Search</button>
+        </form>
+    </section>
+
 </main>
+<hr>
 <%- include('partials/footer.ejs') %>
 </body>
 </html>
