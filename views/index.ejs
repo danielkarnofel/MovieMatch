@@ -6,48 +6,61 @@
 
 <main>
 
-    <section class="container">
-        <h1>Daily Recommendation</h1>
-        <div class="movie-card" id="daily-recommendation">
-            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[0].poster_path %>" alt="Movie poster">
-        </div>
-    </section>
-
-    <section class="container">
-        <h1>Moods</h1>
-        <div class="mood-container">
-            <div class="mood">
-                <a href="/">Feel-good</a>
-            </div>
-            <div class="mood">
-                <a href="/">Mind-bending</a>
-            </div>
-            <div class="mood">
-                <a href="/">Emotional</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- <%console.log(popularMovies.results[0]);%> -->
-    <!-- <section>
-        <h1>Popular Movies</h1>
-        <div class="scroll-container">
-            <% for (let i = 0; i < 5; i++) { %>
-                <div class="movie-card">
-                    <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" alt="Movie poster">
-                </div>
-            <% } %>
-        </div>
+    <section>
+        <h1>Welcome to MovieMatch</h1>
+        <p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just need a feel-good escape.</p>
+        <p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood away.</p>
+        <a href="/">Find Your Match</a>
     </section>
     <hr>
     <section>
-        <h1>Movie Search</h1>
-        <form>
-            <input type="text" name="movieSearch">
-            <button>Search</button>
-        </form>
-    </section> -->
-
+        <h1>Top Picks by Mood</h1>
+        <% for (let i = 0; i < 5; i++) { %>
+            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>">
+        <% } %>
+    </section>
+    <hr>
+    <section>
+        <h1>Quote of the Day</h1>
+        <p>“Be yourself; everyone else is already taken.”</p>
+        <em>― Oscar Wilde</em>
+    </section>
+    <hr>
+    <section>
+        <h1>Most Popular</h1>
+        <% for (let i = 0; i < 5; i++) { %>
+            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>">
+        <% } %>
+    </section>
+    <hr>
+    <section>
+        <h1>Trending Moods</h1>
+        <% for (let i = 0; i < 5; i++) { %>
+            <a href="/">Feel-good</a>
+        <% } %>
+    </section>
+    <hr>
+    <section>
+        <h1>Latest Reviews</h1>
+        <% for (let i = 0; i < 5; i++) { %>
+            <p>"A mesmerizing blend of emotion and intrigue, The Silent Echo keeps you hooked from the first whisper to the final twist. Easily one of the most thought-provoking films of the year."</p>
+            <em>- User</em>
+        <% } %>
+    </section>
+    <hr>
+    <section>
+        <h1>Featured Lists</h1>
+        <% for (let i = 0; i < 5; i++) { %>
+            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>">
+        <% } %>
+    </section>
+    <hr>
+    <section>
+        <h2>Ready to discover your next favorite movie?</h2>
+        <p>Join MovieMatch today and start exploring films that fit your vibe.</p>
+        <a href="/signUp">Sign Up</a>
+    </section>
+    
 </main>
 
 <%- include('partials/footer.ejs') %>
