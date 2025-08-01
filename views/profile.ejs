@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <%- include("partials/head.ejs") %>
+  <body>
+    <%- include("partials/header.ejs") %>
+
+    <main class="container">
+      <h1>Your Profile</h1>
+
+      <% if (isAuthenticated) { %>
+        <p><strong>Username:</strong> <%= username %></p>
+
+        <% /* Get and show the email from the backend */ %>
+        <p><strong>Email:</strong> <%= email %></p>
+      <% } else { %>
+        <p>You are not logged in.</p>
+      <% } %>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>
