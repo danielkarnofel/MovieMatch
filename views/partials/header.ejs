@@ -6,8 +6,16 @@
 
     <!-- User is not signed in -->
     <span class="account">
-        <a href="/login">Login</a><a href="/signUp">Sign Up</a>
-    </span>
+  <% if (isAuthenticated) { %>
+    <span>Hello, <%= username %>!</span>
+    <a href="/profile">Profile</a>
+    <a href="/logout">Logout</a>
+  <% } else { %>
+    <a href="/login">Login</a>
+    <a href="/signUp">Sign Up</a>
+  <% } %>
+</span>
+
 
     <!-- User is signed in -->
     <!-- <span class="account">

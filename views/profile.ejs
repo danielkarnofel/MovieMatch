@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html>
-<%- include('partials/head.ejs') %>
-<body>
-<%- include('partials/header.ejs') %>
+  <%- include("partials/head.ejs") %>
+  <body>
+    <%- include("partials/header.ejs") %>
 
-<main>
-    Test commit
-</main>
+    <main class="container">
+      <h1>Your Profile</h1>
 
-<%- include('partials/footer.ejs') %>
-</body>
+      <% if (isAuthenticated) { %>
+        <p><strong>Username:</strong> <%= username %></p>
+        <p><strong>Email:</strong> <%= email %></p>
+      <% } else { %>
+        <p>You are not logged in.</p>
+      <% } %>
+    </main>
+
+    <%- include("partials/footer.ejs") %>
+  </body>
 </html>
