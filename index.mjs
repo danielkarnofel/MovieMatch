@@ -3,9 +3,11 @@ import mysql from 'mysql2/promise';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
 
-
 const app = express();
 const apiKey = `715c996185f334cb145e6bc6b7859540`;
+
+/* Setup */
+/****************************************************************************************************/
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -57,7 +59,7 @@ app.get('/search', (req, res) => {
     res.render('search');
 });
 
-/* Profile*/
+/* Profile */
 /****************************************************************************************************/
 
 app.get('/profile', async (req, res) => {
@@ -97,14 +99,14 @@ app.get('/movie', (req, res) => {
     res.render('movie');
 });
 
-/* List */
+/* Mood */
 /****************************************************************************************************/
 
 app.get('/mood', (req, res) => {
     res.render('mood');
 });
 
-/* Login/signup */
+/* Login */
 /****************************************************************************************************/
 
 // Show login page
@@ -132,6 +134,9 @@ app.post('/login', async (req, res) => {
     res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
 });
 
+/* Signup */
+/****************************************************************************************************/
+
 // Show signup page
 app.get('/signUp', (req, res) => {
     res.render('signUp', { error: undefined });
@@ -157,6 +162,9 @@ app.post('/signup', async (req, res) => {
         res.render('signUp', { error: 'Username or email already exists.' });
     }
 });
+
+/* Logout */
+/****************************************************************************************************/
 
 // Logout route
 app.get('/logout', (req, res) => {
@@ -187,6 +195,7 @@ app.get("/apiTest", async(req, res) => {
     res.send(data);
 });
 
+/* Startup and shutdown */
 /****************************************************************************************************/
 
 app.listen(3000, ()=>{
