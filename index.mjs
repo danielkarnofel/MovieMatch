@@ -19,7 +19,6 @@ app.use(session({
     saveUninitialized: false
 }));
 
-
 // setting up database connection pool
 const pool = mysql.createPool({
     host: "danielkarnofel.tech",
@@ -37,7 +36,9 @@ app.use((req, res, next) => {
   next();
 });
 
-//routes
+/* Home */
+/****************************************************************************************************/
+
 app.get('/', async (req, res) => {
     const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
     const response = await fetch(url);
@@ -49,35 +50,8 @@ app.get('/', async (req, res) => {
     });
 });
 
-
-app.get("/dbTest", async(req, res) => {
-    const sql = "SELECT CURDATE()";
-    const [rows] = await conn.query(sql);
-    res.send(rows);
-});
-
-app.get("/apiTest", async(req, res) => {
-    
-    // This provides API configuration info like query parameters and image sizes
-    // const url = `https://api.themoviedb.org/3/configuration?api_key=${apiKey}&query=test`;
-
-    // List of genres
-    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&query=test`;
-
-    const response = await fetch(url);
-    const data = await response.json();
-    res.send(data);
-});
-
-// Show login page
-app.get('/login', (req, res) => {
-    res.render('login', { isAuthenticated: req.session.userId, error: undefined });
-});
-
-// Show signup page
-app.get('/signUp', (req, res) => {
-    res.render('signUp', { error: undefined });
-});
+/* Profile*/
+/****************************************************************************************************/
 
 app.get('/profile', async (req, res) => {
   if (!req.session.userId) {
@@ -95,22 +69,12 @@ app.get('/profile', async (req, res) => {
   res.render('profile', { username, email });
 });
 
+/* Login/signup */
+/****************************************************************************************************/
 
-// Handle signup logic
-app.post('/signup', async (req, res) => {
-    const { username, password, phone } = req.body;
-    const email = `${username}@moviematch.fake`; // do w want a real email?
-
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const sql = `INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)`;
-        await pool.query(sql, [username, hash, email]);
-
-        res.redirect('/login');
-    } catch (err) {
-        console.error(err);
-        res.render('signUp', { error: 'Username or email already exists.' });
-    }
+// Show login page
+app.get('/login', (req, res) => {
+    res.render('login', { isAuthenticated: req.session.userId, error: undefined });
 });
 
 // Handle login logic
@@ -133,6 +97,32 @@ app.post('/login', async (req, res) => {
     res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
 });
 
+// Show signup page
+app.get('/signUp', (req, res) => {
+    res.render('signUp', { error: undefined });
+});
+
+// Handle signup logic
+app.post('/signup', async (req, res) => {
+    const { username, password, confirm } = req.body;
+    const email = `${username}@moviematch.fake`; // do w want a real email?
+
+    if (password != confirm) {
+        // TODO: Throw some kind of error here
+    }
+
+    try {
+        const hash = await bcrypt.hash(password, 10);
+        const sql = `INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)`;
+        await pool.query(sql, [username, hash, email]);
+
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.render('signUp', { error: 'Username or email already exists.' });
+    }
+});
+
 // Logout route
 app.get('/logout', (req, res) => {
     req.session.destroy(() => {
@@ -140,6 +130,29 @@ app.get('/logout', (req, res) => {
     });
 });
 
+/* Test routes */
+/****************************************************************************************************/
+
+app.get("/dbTest", async(req, res) => {
+    const sql = "SELECT CURDATE()";
+    const [rows] = await conn.query(sql);
+    res.send(rows);
+});
+
+app.get("/apiTest", async(req, res) => {
+    
+    // This provides API configuration info like query parameters and image sizes
+    // const url = `https://api.themoviedb.org/3/configuration?api_key=${apiKey}&query=test`;
+
+    // List of genres
+    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&query=test`;
+
+    const response = await fetch(url);
+    const data = await response.json();
+    res.send(data);
+});
+
+/****************************************************************************************************/
 
 app.listen(3000, ()=>{
     console.log("Express server running")

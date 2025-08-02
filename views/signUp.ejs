@@ -1,31 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Sign Up</title>
-  <link rel="stylesheet" href="/css/styles.css">
-</head>
+<%- include('partials/head.ejs') %>
 <body>
-  <%- include('partials/nav.ejs'); %>
 
-  <div class="container">
-    <h2>Create Admin Account</h2>
-    <% if (typeof error !== 'undefined') { %>
-      <p style="color:red"><%= error %></p>
+    <img src="img/logo.svg">
+    <h1>MovieMatch</h1>
+
+    <% if (typeof error !=='undefined' ) { %>
+        <p style="color:red">
+            <%= error %>
+        </p>
     <% } %>
+
     <form action="/signup" method="POST">
-      <label>Username:</label><br>
-      <input type="text" name="username" required><br>
-
-      <label>Password:</label><br>
-      <input type="password" name="password" required><br>
-
-      <label>Phone Number:</label><br>
-      <input type="text" name="phone" required><br><br>
-
-      <input type="submit" value="Sign Up">
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="password" name="confirm" placeholder="Confirm password" required><br>
+        <button>Sign Up</button>
     </form>
-  </div>
 
-  <%- include('partials/footer'); %>
+    <a href="/login">Existing user? Login here</a>
+
 </body>
 </html>
