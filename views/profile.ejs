@@ -1,20 +1,32 @@
 <!DOCTYPE html>
 <html>
-  <%- include("partials/head.ejs") %>
-  <body>
-    <%- include("partials/header.ejs") %>
+<%- include("partials/head.ejs") %>
+<body>
+<%- include("partials/header.ejs") %>
 
-    <main class="container">
-      <h1>Your Profile</h1>
-
-      <% if (isAuthenticated) { %>
-        <p><strong>Username:</strong> <%= username %></p>
-        <p><strong>Email:</strong> <%= email %></p>
-      <% } else { %>
+    <% if (!isAuthenticated) { %>
         <p>You are not logged in.</p>
-      <% } %>
+        <!--Should redirect to login page-->
+    <% } %>
+
+    <main>
+        <h1>Hi <%= username %>!</h1>
+        <p><strong>Username:</strong><%= username %></p>
+        <p><strong>Email:</strong><%= email %></p>
+
+        <h2>My Lists</h2> <button>Create List</button>
+        <!--Example list entry-->
+        <h3>List Title 1</h3><button>Edit</button><button>Delete</button>
+        <a href="/movie"><img src="img/example_poster.webp"></a><a href="/movie"><img src="img/example_poster.webp"></a>
+        <!--Example list entry-->
+        <h3>List Title 2</h3><button>Edit</button><button>Delete</button>
+        <a href="/movie"><img src="img/example_poster.webp"></a><a href="/movie"><img src="img/example_poster.webp"></a>
+
+        <h2>My Moods</h2> <button>Create Mood</button>
+        <!--Example mood entries-->
+        <a href="/mood">Feel good</a><a href="/mood">Feel good</a><a href="/mood">Feel good</a>
     </main>
 
-    <%- include("partials/footer.ejs") %>
-  </body>
+<%- include("partials/footer.ejs") %>
+</body>
 </html>
