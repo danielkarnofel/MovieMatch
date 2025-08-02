@@ -1,25 +1,26 @@
 <header>
     
     <a class="logo" href="/">
-        <h1>MovieMatch</h1><img src="img/fire.svg">
+        <h1>MovieMatch</h1><img src="img/logo.svg">
     </a>
 
-    <!-- User is not signed in -->
     <span class="account">
-  <% if (isAuthenticated) { %>
-    <span>Hello, <%= username %>!</span>
-    <a href="/profile">Profile</a>
-    <a href="/logout">Logout</a>
-  <% } else { %>
-    <a href="/login">Login</a>
-    <a href="/signUp">Sign Up</a>
-  <% } %>
-</span>
+      <% if (isAuthenticated) { %>
 
+        <a href="/search">Search</a>
+        <a href="/"><%= username %></a> 
+        <!--TODO: Implement nav dropdown-->
+        <a href="/profile">Profile</a>
+        <a href="/admin">Admin</a>
+        <a href="/logout">Logout</a>
 
-    <!-- User is signed in -->
-    <!-- <span class="account">
-        <a href="/profile"><img src="img/account.svg"></a><a href="/">Logout</a>
-    </span> -->
+      <% } else { %>
+
+        <a href="/search">Search</a>
+        <a href="/login">Login</a>
+        <a href="/signUp">Sign Up</a>
+
+      <% } %>
+    </span>
 
 </header>
