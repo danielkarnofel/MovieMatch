@@ -1,4 +1,5 @@
 const searchButton = document.querySelector(`#searchButton`);
+const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
 
 searchButton.addEventListener(`click`, searchMovie);
 
@@ -32,7 +33,7 @@ async function searchMovie(event) {
                                 <p class="card-text">
                                     <strong>Release Date:</strong> ${movies.results[i].release_date} <br>
                                     <strong>Adult Content:</strong> ${movies.results[i].adult === false ? 'No' : 'Yes'} <br>
-                                    <strong>Language:</strong> ${movies.results[i].original_language} <br>
+                                    <strong>Language:</strong> ${languageNames.of(movies.results[i].original_language)} <br>
                                     <strong>Average Vote:</strong> ${movies.results[i].vote_average} <br>
                                 </p>
                             </div>
