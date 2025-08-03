@@ -173,6 +173,28 @@ app.get('/logout', (req, res) => {
     });
 });
 
+/* API */
+/****************************************************************************************************/
+app.get('/api/search/:query', async(req, res) => {
+    try {
+    const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
+
+    const response = await fetch(movieAPI);
+    const data = await response.json();
+
+    if (data.length === 0) {
+        return res.status(404).json({ error: "Search found 0 matches." });
+    }
+
+    res.json(data);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+
+});
+
 /* Test routes */
 /****************************************************************************************************/
 

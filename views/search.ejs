@@ -4,17 +4,15 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>Search by keyword</h1>
-<input type="text"><button>Search</button>
+<div class="indent-from-edges">
+    <h1>Search by keyword</h1>
+    <input type="text" id="searchInput">
+    <button id="searchButton">Search</button>
 
-<h2>Results</h2>
-<!--Example result-->
-<div>
-    <img src="img/example_poster.webp">
-    <h3>Movie Title</h3>
-    <p>Movie description...</p>
+    <div id="results" class="row"></div>
 </div>
 
 <%- include('partials/footer.ejs') %>
+<script src="js/search.js"></script>
 </body>
 </html>
