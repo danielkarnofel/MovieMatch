@@ -24,8 +24,8 @@ async function searchMovie(event) {
                             '/img/default.jpg';
 
             let movieInfo = `
-            <div class="col-md-4 mb-4">
-                <div class="card d-flex flex-column">
+            <div class="col-md-4 mb-4 d-flex">
+                <div class="card d-flex flex-column h-100 w-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between">
                             <div class="d-flex flex-column" style="flex: 1; padding-right: 20px;">
