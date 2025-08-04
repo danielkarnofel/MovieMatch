@@ -3,9 +3,11 @@ import mysql from 'mysql2/promise';
 import session from 'express-session';
 import bcrypt from 'bcrypt';
 
-
 const app = express();
 const apiKey = `715c996185f334cb145e6bc6b7859540`;
+
+/* Setup */
+/****************************************************************************************************/
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
@@ -18,7 +20,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-
 
 // setting up database connection pool
 const pool = mysql.createPool({
@@ -37,8 +38,10 @@ app.use((req, res, next) => {
   next();
 });
 
-//routes
-app.get('/', async (req, res) => {
+/* Home */
+/****************************************************************************************************/
+
+app.get('/', isAuthenticated, async (req, res) => {
     const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -49,6 +52,161 @@ app.get('/', async (req, res) => {
     });
 });
 
+/* Search */
+/****************************************************************************************************/
+
+app.get('/search', isAuthenticated, (req, res) => {
+    res.render('search');
+});
+
+/* Profile */
+/****************************************************************************************************/
+
+app.get('/profile', isAuthenticated, async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+
+  const sql = 'SELECT username, email FROM users WHERE id = ?';
+  const [rows] = await pool.query(sql, [req.session.userId]);
+
+  if (rows.length === 0) {
+    return res.redirect('/logout'); 
+  }
+
+  const { username, email } = rows[0];
+  res.render('profile', { username, email });
+});
+
+/* Admin */
+/****************************************************************************************************/
+
+app.get('/admin', (req, res) => {
+    res.render('admin');
+});
+
+/* List */
+/****************************************************************************************************/
+
+app.get('/list', (req, res) => {
+    res.render('list');
+});
+
+/* Movie */
+/****************************************************************************************************/
+
+app.get('/movie', (req, res) => {
+    res.render('movie');
+});
+
+/* Mood */
+/****************************************************************************************************/
+
+app.get('/mood', (req, res) => {
+    res.render('mood');
+});
+
+/* Login */
+/****************************************************************************************************/
+
+// Show login page
+app.get('/login', (req, res) => {
+    res.render('login', { isAuthenticated: req.session.userId, error: undefined });
+});
+
+// Handle login logic
+app.post('/login', async (req, res) => {
+    const { username, password } = req.body;
+    const sql = `SELECT * FROM users WHERE username = ?`;
+    const [rows] = await pool.query(sql, [username]);
+
+    if (rows.length > 0) {
+        const user = rows[0];
+        const match = await bcrypt.compare(password, user.userPassword);
+
+        if (match) {
+            req.session.userId = user.id;
+            req.session.username = user.username;
+            req.session.authenticated = true;
+            return res.redirect('/');
+        }
+    }
+
+    res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
+});
+
+/* Signup */
+/****************************************************************************************************/
+
+// Show signup page
+app.get('/signUp', (req, res) => {
+    res.render('signUp', { error: undefined });
+});
+
+// Handle signup logic
+app.post('/signup', async (req, res) => {
+    const { username, password, confirm } = req.body;
+    const email = `${username}@moviematch.fake`; // do w want a real email?
+
+    if (password != confirm) {
+        // TODO: Throw some kind of error here
+    }
+
+    try {
+        const hash = await bcrypt.hash(password, 10);
+        const sql = `INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)`;
+        await pool.query(sql, [username, hash, email]);
+
+        res.redirect('/login');
+    } catch (err) {
+        console.error(err);
+        res.render('signUp', { error: 'Username or email already exists.' });
+    }
+});
+
+/* Logout */
+/****************************************************************************************************/
+
+// Logout route
+app.get('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');
+    });
+});
+
+/* API */
+/****************************************************************************************************/
+function isAuthenticated(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect(`/login`);
+    }
+    else {
+        next();
+    }
+}
+
+app.get('/api/search/:query', isAuthenticated, async(req, res) => {
+    try {
+    const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
+
+    const response = await fetch(movieAPI);
+    const data = await response.json();
+
+    if (data.length === 0) {
+        return res.status(404).json({ error: "Search found 0 matches." });
+    }
+
+    res.json(data);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+
+});
+
+/* Test routes */
+/****************************************************************************************************/
 
 app.get("/dbTest", async(req, res) => {
     const sql = "SELECT CURDATE()";
@@ -69,77 +227,8 @@ app.get("/apiTest", async(req, res) => {
     res.send(data);
 });
 
-// Show login page
-app.get('/login', (req, res) => {
-    res.render('login', { isAuthenticated: req.session.userId, error: undefined });
-});
-
-// Show signup page
-app.get('/signUp', (req, res) => {
-    res.render('signUp', { error: undefined });
-});
-
-app.get('/profile', async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login');
-  }
-
-  const sql = 'SELECT username, email FROM users WHERE id = ?';
-  const [rows] = await pool.query(sql, [req.session.userId]);
-
-  if (rows.length === 0) {
-    return res.redirect('/logout'); 
-  }
-
-  const { username, email } = rows[0];
-  res.render('profile', { username, email });
-});
-
-
-// Handle signup logic
-app.post('/signup', async (req, res) => {
-    const { username, password, phone } = req.body;
-    const email = `${username}@moviematch.fake`; // do w want a real email?
-
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const sql = `INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)`;
-        await pool.query(sql, [username, hash, email]);
-
-        res.redirect('/login');
-    } catch (err) {
-        console.error(err);
-        res.render('signUp', { error: 'Username or email already exists.' });
-    }
-});
-
-// Handle login logic
-app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const sql = `SELECT * FROM users WHERE username = ?`;
-    const [rows] = await pool.query(sql, [username]);
-
-    if (rows.length > 0) {
-        const user = rows[0];
-        const match = await bcrypt.compare(password, user.userPassword);
-
-        if (match) {
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            return res.redirect('/');
-        }
-    }
-
-    res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
-});
-
-// Logout route
-app.get('/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/');
-    });
-});
-
+/* Startup and shutdown */
+/****************************************************************************************************/
 
 app.listen(3000, ()=>{
     console.log("Express server running")

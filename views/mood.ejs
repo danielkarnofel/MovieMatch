@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head.ejs') %>
+<body>
+<%- include('partials/header.ejs') %>
+
+<h1>Mood name</h1>
+
+<h2>Genres</h2>
+<select><option>Select genre</option></select><button>Add</button><br>
+<span>Genre 1</span><span>Genre 2</span>
+
+<h2>Keywords</h2>
+<input type=text><button>Add</button><br>
+<span>Keyword 1<span><span>Keyword 2</span>
+
+<h2>Recommendations</h2>
+<!--Recommendations-->
+<a href="/movie">
+    <img src="img/example_poster.webp">
+</a>
+<a href="/movie">
+    <img src="img/example_poster.webp">
+</a>
+
+<%- include('partials/footer.ejs') %>
+</body>
+</html>

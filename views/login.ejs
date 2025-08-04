@@ -1,32 +1,22 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Screen</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+<html>
+<%- include('partials/head.ejs') %>
 <body>
-    <%- include("partials/nav.ejs") %>
-    
-    <h1> Login </h1>
 
-    <% if(isAuthenticated) { %>
-        <h2> You are already logged in! </h2>
-    <% } else { %> 
-        <form method="POST" action="/login">
-            Username: 
-            <input type="text" name="username"><br><br>
-            Password: 
-            <input type="password" name="password"><br><br>
-            <button> Login </button>
-        </form>
+    <img src="img/logo.svg">
+    <h1>MovieMatch</h1>
+
+    <% if (isAuthenticated) { %>
+        <h2>You are already logged in!</h2>
     <% } %>
-    <br>
 
-    <% if (typeof(error) != "undefined") { %> 
-        <%= error %>
-      <% } %>
+    <form action="/login" method="POST">
+        <input type="text" name="username" placeholder="Username" required><br>
+        <input type="password" name="password" placeholder="Password" required><br>
+        <button>Login</button>
+    </form>
+
+    <a href="/signup">New user? Sign up here</a>
 
 </body>
 </html>

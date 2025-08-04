@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<%- include('partials/head.ejs') %>
+<body>
+<%- include('partials/header.ejs') %>
+
+<h1>List Title</h1>
+<a href="/search">Add movie</a><br>
+<!--Example list items-->
+<a href="/movie"> <!--Each entry should link to the /movie view for that movie-->
+    <img src="img/example_poster.webp">
+</a>
+<a href="/movie"> <!--Each entry should link to the /movie view for that movie-->
+    <img src="img/example_poster.webp">
+</a>
+
+<%- include('partials/footer.ejs') %>
+</body>
+</html>

@@ -150,3 +150,16 @@ footer {
     text-align: center;
     padding: 2rem;
 }
+
+
+/********************************************************************************/
+/* custom style */
+/********************************************************************************/
+.indent-from-edges {
+    padding: 20px;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+}
