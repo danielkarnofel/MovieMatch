@@ -41,7 +41,7 @@ app.use((req, res, next) => {
 /* Home */
 /****************************************************************************************************/
 
-app.get('/', async (req, res) => {
+app.get('/', isAuthenticated, async (req, res) => {
     const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -55,14 +55,14 @@ app.get('/', async (req, res) => {
 /* Search */
 /****************************************************************************************************/
 
-app.get('/search', (req, res) => {
+app.get('/search', isAuthenticated, (req, res) => {
     res.render('search');
 });
 
 /* Profile */
 /****************************************************************************************************/
 
-app.get('/profile', async (req, res) => {
+app.get('/profile', isAuthenticated, async (req, res) => {
   if (!req.session.userId) {
     return res.redirect('/login');
   }
@@ -127,6 +127,7 @@ app.post('/login', async (req, res) => {
         if (match) {
             req.session.userId = user.id;
             req.session.username = user.username;
+            req.session.authenticated = true;
             return res.redirect('/');
         }
     }
@@ -175,7 +176,16 @@ app.get('/logout', (req, res) => {
 
 /* API */
 /****************************************************************************************************/
-app.get('/api/search/:query', async(req, res) => {
+function isAuthenticated(req, res, next) {
+    if (!req.session.authenticated) {
+        res.redirect(`/login`);
+    }
+    else {
+        next();
+    }
+}
+
+app.get('/api/search/:query', isAuthenticated, async(req, res) => {
     try {
     const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
 
