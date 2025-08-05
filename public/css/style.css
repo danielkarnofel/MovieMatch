@@ -47,7 +47,7 @@ a {
 }
 
 a:hover {
-    text-decoration: underline;
+    /* text-decoration: underline; */
 }
 
 a:visited {
@@ -85,14 +85,17 @@ header {
     padding: 0 0 0.1rem 0;
 }
 
-.account {
+/********************************************************************************/
+/* Nav */
+/********************************************************************************/
+
+nav {
     display: flex;
-    gap: 1rem;
     justify-content: center;
     align-items: center;
 }
 
-.account a {
+nav a {
     color: #EEE;
     text-decoration: none;
     display: flex;
@@ -101,8 +104,58 @@ header {
     padding: 1rem;
 }
 
-.account a:hover {
+nav a:hover {
     background-color: #444;
+}
+
+/********************************************************************************/
+/* Dropdown */
+/********************************************************************************/
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}   
+
+.dropdown-toggle {
+    cursor: pointer;
+    color: #EEE;
+    display: flex;
+    align-items: center;
+    width: 120px;
+    height: 100%;
+    padding: 1rem;
+}
+
+.dropdown-toggle:hover {
+    background-color: #444;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #444;
+    z-index: 1;
+    flex-direction: column;
+}
+
+.dropdown-content a {
+    color: #EEE;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    width: 120px;
+    height: 100%;
+    padding: 1rem;
+}
+
+.dropdown-content a:hover {
+    background-color: #333;
+}
+
+.dropdown:hover .dropdown-content {
+    display: flex;
+    border: 1px solid #EEE;
 }
 
 /********************************************************************************/

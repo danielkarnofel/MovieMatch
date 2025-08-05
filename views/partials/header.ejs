@@ -1,26 +1,29 @@
 <header>
-    
     <a class="logo" href="/">
         <h1>MovieMatch</h1><img src="img/logo.svg">
     </a>
 
-    <span class="account">
-      <% if (isAuthenticated) { %>
+    <nav>
+        <% if (isAuthenticated) { %>
+            
+            <a href="/search"><span class="material-symbols-outlined">search</span></a>
 
-        <a href="/search"><span class="material-symbols-outlined">search</span></a>
-        <a href="/"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></a> 
-        <!--TODO: Implement nav dropdown-->
-        <a href="/profile">Profile</a>
-        <a href="/admin">Admin</a>
-        <a href="/logout">Logout</a>
+            <div class="dropdown">
+                <div class="dropdown-toggle" href="/search"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></div>
+                <div class="dropdown-content">
+                    <a href="/">Home</a>
+                    <a href="/profile">Profile</a>
+                    <a href="/admin">Admin</a>
+                    <a href="/logout">Logout</a>
+                </div>
+            </div>
 
-      <% } else { %>
+        <% } else { %>
 
-        <a href="/search"><span class="material-symbols-outlined">search</span></a>
-        <a href="/login">Login</a>
-        <a href="/signUp">Sign Up</a>
+            <a href="/search"><span class="material-symbols-outlined">search</span></a>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
 
-      <% } %>
-    </span>
-
+        <% } %>
+    </nav>
 </header>
