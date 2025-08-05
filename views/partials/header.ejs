@@ -1,26 +1,28 @@
-<header>
-    
-    <a class="logo" href="/">
-        <h1>MovieMatch</h1><img src="img/logo.svg">
-    </a>
-
-    <span class="account">
-      <% if (isAuthenticated) { %>
-
-        <a href="/search">Search</a>
-        <a href="/"><%= username %></a> 
-        <!--TODO: Implement nav dropdown-->
-        <a href="/profile">Profile</a>
-        <a href="/admin">Admin</a>
-        <a href="/logout">Logout</a>
-
-      <% } else { %>
-
-        <a href="/search">Search</a>
-        <a href="/login">Login</a>
-        <a href="/signUp">Sign Up</a>
-
-      <% } %>
-    </span>
-
+<header class="d-flex justify-content-between align-items-center px-3 py-2 bg-dark text-white">
+  <a class="logo d-flex align-items-center text-white text-decoration-none" href="/">
+    <h1 class="h4 mb-0 me-2">MovieMatch</h1>
+    <img src="/img/logo.svg" alt="Logo" style="height: 32px;">
+  </a>
+  <div class="account d-flex align-items-center gap-3">
+    <% if (isAuthenticated) { %>
+      <a href="/search" class="text-white text-decoration-none fs-5" title="Search">
+        <i class="bi bi-search"></i>
+      </a>
+      <div class="dropdown">
+        <a href="#" class="dropdown-toggle text-white text-decoration-none" id="userDropdown" role="button"
+           data-bs-toggle="dropdown" aria-expanded="false">
+          <%= username %>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end dropdown-menu-dark" aria-labelledby="userDropdown">
+          <li><a class="dropdown-item" href="/profile">Profile</a></li>
+          <li><a class="dropdown-item" href="/admin">Admin</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/logout">Logout</a></li>
+        </ul>
+      </div>
+    <% } else { %>
+      <a href="/login" class="text-white text-decoration-none">Login</a>
+      <a href="/signUp" class="text-white text-decoration-none">Sign Up</a>
+    <% } %>
+  </div>
 </header>

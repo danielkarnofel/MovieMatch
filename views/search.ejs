@@ -4,15 +4,23 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<div class="indent-from-edges">
-    <h1>Search by keyword</h1>
-    <input type="text" id="searchInput">
-    <button id="searchButton">Search</button>
+<main>
+    <div id="search" class="container mt-4 text-white">
+        <h1 class="mb-4">Search by keyword</h1>
 
-    <div id="results" class="row equal-height-cards"></div>
-</div>
+        <div class="input-group mb-3">
+            <input type="text" id="searchInput" class="form-control" placeholder="Search movies...">
+            <button id="searchButton" class="btn btn-primary">Search</button>
+        </div>
+    </div>
+
+    <div id="resultsList" class="container mt-4 text-white d-none">
+        <div id="results" class="row equal-height-cards"></div>
+    </div>
+    <br>
+</main>
 
 <%- include('partials/footer.ejs') %>
-<script src="js/search.js"></script>
+<script src="/js/search.js"></script>
 </body>
 </html>
