@@ -3,6 +3,7 @@
 <%- include('partials/head.ejs') %>
 <body>
 
+    <div class="signup-login-container">
     <img src="img/logo.svg">
     <h1>MovieMatch</h1>
 
@@ -11,12 +12,13 @@
     <% } %>
 
     <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required><br>
-        <input type="password" name="password" placeholder="Password" required><br>
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button>Login</button>
     </form>
 
     <a href="/signup">New user? Sign up here</a>
+    </div>
 
 </body>
 </html>

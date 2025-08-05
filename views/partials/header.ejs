@@ -7,8 +7,8 @@
     <span class="account">
       <% if (isAuthenticated) { %>
 
-        <a href="/search">Search</a>
-        <a href="/"><%= username %></a> 
+        <a href="/search"><span class="material-symbols-outlined">search</span></a>
+        <a href="/"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></a> 
         <!--TODO: Implement nav dropdown-->
         <a href="/profile">Profile</a>
         <a href="/admin">Admin</a>
@@ -16,7 +16,7 @@
 
       <% } else { %>
 
-        <a href="/search">Search</a>
+        <a href="/search"><span class="material-symbols-outlined">search</span></a>
         <a href="/login">Login</a>
         <a href="/signUp">Sign Up</a>
 

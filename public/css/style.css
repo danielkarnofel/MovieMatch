@@ -3,7 +3,11 @@
 /********************************************************************************/
 
 :root {
-
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 350;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
 }
 
 *, *::before, *::after {
@@ -13,7 +17,41 @@
 }
 
 body {
+    color: #EEE;
+    background-color: #222;
+}
+
+input {
+    padding: 0.75rem;
+    border-radius: 8px;
+}
+
+input::placeholder {
+    color: #AAA;
+}
+
+button {
+    padding: 0.75rem;
+    border-radius: 8px;
+    color: #222;
     background-color: #EEE;
+}
+
+button:hover {
+    background-color: #CCC;
+}
+
+a {
+    color: #EEE;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:visited {
+    color: #EEE;
 }
 
 /********************************************************************************/
@@ -65,6 +103,36 @@ header {
 
 .account a:hover {
     background-color: #444;
+}
+
+/********************************************************************************/
+/* Login/Sign Up */
+/********************************************************************************/
+
+.signup-login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20vh 0 0 0;
+    gap: 1rem;
+}
+
+.signup-login-container img {
+    width: 200px;
+    height: auto;
+}
+
+.signup-login-container h1 {
+    font-size: 3rem;
+}
+
+.signup-login-container form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /********************************************************************************/
