@@ -41,15 +41,27 @@ app.use((req, res, next) => {
 /* Home */
 /****************************************************************************************************/
 
-app.get('/', isAuthenticated, async (req, res) => {
-    const url = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
-    const response = await fetch(url);
-    const data = await response.json();
+app.get('/', async (req, res) => {
+    const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+    const urlPopularMovies = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
+    const responsePopularMovies = await fetch(urlPopularMovies);
+    const dataPopularMovies = await responsePopularMovies.json();
+    const responseGenre = await fetch(urlGenre);
+    const dataGenre = await responseGenre.json();
 
-    res.render('index', {
-        popularMovies: data,
-        isAuthenticated: req.session.userId
-    });
+    if (!req.session.authenticated) {
+        res.render('indexlo', {
+            popularMovies: dataPopularMovies,
+            allMoods: dataGenre.genres,
+            isAuthenticated: req.session.userId
+        });
+    }
+    else {
+        res.render('index', {
+            popularMovies: dataPopularMovies,
+            isAuthenticated: req.session.userId
+        });
+    }
 });
 
 /* Search */
@@ -172,6 +184,71 @@ app.get('/logout', (req, res) => {
     req.session.destroy(() => {
         res.redirect('/');
     });
+});
+
+// Favorites routes
+app.get('/favorites', async (req, res) => {
+  if (!req.session.username) return res.redirect('/login');
+  const sql = 'SELECT * FROM favorites WHERE user_name = ?';
+  const [rows] = await pool.query(sql, [req.session.username]);
+  res.render('favorites', { favorites: rows });
+});
+
+app.post('/favorites', async (req, res) => {
+  if (!req.session.username) return res.status(401).send('Not authenticated');
+  const { movie_title, genre, poster_url } = req.body;
+  const sql = `INSERT INTO favorites (user_name, movie_title, genre, poster_url) VALUES (?, ?, ?, ?)`;
+  await pool.query(sql, [req.session.username, movie_title, genre, poster_url]);
+  res.redirect('/favorites');
+});
+
+app.post('/favorites/delete/:id', async (req, res) => {
+  if (!req.session.username) return res.status(401).send('Not authenticated');
+  const id = req.params.id;
+  const sql = `DELETE FROM favorites WHERE id = ? AND user_name = ?`;
+  await pool.query(sql, [id, req.session.username]);
+  res.redirect('/favorites');
+});
+
+// Lists routes
+app.get('/lists', async (req, res) => {
+  if (!req.session.username) return res.redirect('/login');
+  const sql = 'SELECT * FROM custom_lists WHERE user_name = ?';
+  const [rows] = await pool.query(sql, [req.session.username]);
+  res.render('lists', { lists: rows });
+});
+
+app.post('/lists', async (req, res) => {
+  if (!req.session.username) return res.status(401).send('Not authenticated');
+  const { list_name, description } = req.body;
+  const sql = `INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)`;
+  await pool.query(sql, [req.session.username, list_name, description]);
+  res.redirect('/lists');
+});
+
+app.get('/lists/:id', async (req, res) => {
+  if (!req.session.username) return res.redirect('/login');
+  const listId = req.params.id;
+  const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
+  const [rows] = await pool.query(sql, [listId]);
+  res.render('listDetails', { listMovies: rows });
+});
+
+// Reviews routes
+app.get('/reviews/:movieId', async (req, res) => {
+  const movieId = req.params.movieId;
+  const sql = 'SELECT * FROM reviews WHERE movie_title = ?';
+  const [rows] = await pool.query(sql, [movieId]);
+  res.render('reviews', { reviews: rows, movieId });
+});
+
+app.post('/reviews/:movieId', async (req, res) => {
+  if (!req.session.username) return res.status(401).send('Not authenticated');
+  const movieId = req.params.movieId;
+  const { rating, comment } = req.body;
+  const sql = `INSERT INTO reviews (user_name, movie_title, rating, comment) VALUES (?, ?, ?, ?)`;
+  await pool.query(sql, [req.session.username, movieId, rating, comment]);
+  res.redirect(`/reviews/${movieId}`);
 });
 
 /* API */

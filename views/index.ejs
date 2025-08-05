@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <%- include('partials/head.ejs') %>
-<body>
+<body class="bg-dark text-white">
 <%- include('partials/header.ejs') %>
 
 <main>
 
     <!--Content assumes user is logged in-->
+<main class="container my-3 py-3">
 
     <section>
         <h1>Welcome to MovieMatch</h1>
@@ -54,6 +55,99 @@
         <% } %>
     </section>
     <% } %>
+  <section class="mb-3 text-center">
+    <h1 class="mb-3">Welcome to MovieMatch</h1>
+    <p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just need a feel-good escape.</p>
+    <p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood away.</p>
+    <a href="/" class="btn btn-primary mt-3">Find Your Match</a>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3">
+    <h2 class="mb-3">Top Picks by Mood</h2>
+    <div class="row g-3 text-center">
+      <% for (let i = 0; i < 6; i++) { %>
+        <div class="col-6 col-sm-4 col-md-2">
+          <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" 
+               alt="Top Pick Movie" 
+               class="img-fluid rounded">
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3 text-center">
+    <h2 class="mb-3">Quote of the Day</h2>
+    <p>“Be yourself; everyone else is already taken.”</p>
+    <em>― Oscar Wilde</em>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3">
+    <h2 class="mb-3">Most Popular</h2>
+    <div class="row g-3 text-center">
+      <% for (let i = 0; i < 6; i++) { %>
+        <div class="col-6 col-sm-4 col-md-2">
+          <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" 
+               alt="Popular Movie" 
+               class="img-fluid rounded">
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3">
+    <h2 class="mb-3">Trending Moods</h2>
+    <div class="d-flex flex-wrap gap-2">
+      <% const moods = ['Feel-good', 'Romantic', 'Suspenseful', 'Adventurous', 'Thought-provoking']; %>
+      <% moods.forEach(mood => { %>
+        <a href="/mood/<%= mood.toLowerCase().replace(/\s+/g, '-') %>" 
+           class="btn btn-outline-light btn-sm">
+          <%= mood %>
+        </a>
+      <% }) %>
+    </div>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3">
+    <h2 class="mb-3">Latest Reviews</h2>
+    <% for (let i = 0; i < 5; i++) { %>
+      <p>"A mesmerizing blend of emotion and intrigue, The Silent Echo keeps you hooked from the first whisper to the final twist. Easily one of the most thought-provoking films of the year."</p>
+      <em>- User</em>
+    <% } %>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3">
+    <h2 class="mb-3">Featured Lists</h2>
+    <div class="row g-3">
+      <% for (let i = 0; i < 5; i++) { %>
+        <div class="col-6 col-sm-4 col-md-2">
+          <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" 
+               alt="Featured Movie" 
+               class="img-fluid rounded">
+        </div>
+      <% } %>
+    </div>
+  </section>
+
+  <hr class="border-secondary">
+
+  <section class="mb-3 text-center">
+    <h2>Ready to discover your next favorite movie?</h2>
+    <p>Join MovieMatch today and start exploring films that fit your vibe.</p>
+    <a href="/signUp" class="btn btn-primary">Sign Up</a>
+  </section>
+
 </main>
 
 <%- include('partials/footer.ejs') %>

@@ -2,7 +2,14 @@
 <html>
 <%- include('partials/head.ejs') %>
 <body>
+    <main>
+        <div class="d-flex justify-content-center align-items-center vh-100">
+            <div class="text-center">
+                <div class="container border border-secondary rounded p-4 bg-dark text-white">
+                    <img src="img/logo.svg" class="mb-3" alt="Logo">
+                    <h1>MovieMatch</h1>
 
+<<<<<<< HEAD
     <div class="signup-login-container">
     <img src="img/logo.svg">
     <h1>MovieMatch</h1>
@@ -22,6 +29,23 @@
 
     <a href="/login">Existing user? Login here</a>
     </div>
+=======
+                    <% if (typeof error !== 'undefined') { %>
+                        <p class="text-danger"><%= error %></p>
+                    <% } %>
 
+                    <form action="/signup" method="POST" class="mt-3">
+                        <input type="text" name="username" placeholder="Username" class="form-control mb-2" required>
+                        <input type="password" name="password" placeholder="Password" class="form-control mb-2" required>
+                        <input type="password" name="confirm" placeholder="Confirm password" class="form-control mb-3" required>
+                        <button class="btn btn-primary w-100">Sign Up</button>
+                    </form>
+>>>>>>> kaylasCode
+
+                    <a href="/login" class="d-block mt-3 text-white text-decoration-none">Existing user? Log in here</a>
+                </div>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
