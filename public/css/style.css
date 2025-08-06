@@ -50,7 +50,20 @@ a:visited {
     color: #EEE;
 }
 
+a.button-anchor {
+    display: block;
+    width: fit-content;
+    border-radius: 1rem;
+    margin-left: 1rem;
+    padding: 1rem;
+    color: #222;
+    background-color: #CCC;
+}
 
+.button-anchor:hover {
+    color: #EEE;
+    background-color: #333;
+}
 
 
 /********************************************************************************/
@@ -82,11 +95,6 @@ a:visited {
     align-items: center;
     gap: 0.5rem;
 }
-
-
-
-
-
 
 /********************************************************************************/
 /* Header */
@@ -200,7 +208,7 @@ nav a:hover {
 /********************************************************************************/
 
 main {
-    min-height: 80vh;
+    min-height: 100vh;
     padding: 1rem;
 }
 
@@ -283,4 +291,12 @@ section {
 .mood-container a:hover {
     color: #EEE;
     background-color: #333;
+}
+
+/********************************************************************************/
+/* Hero */
+/********************************************************************************/
+
+.hero-text {
+    padding: 1rem;
 }

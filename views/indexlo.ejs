@@ -10,76 +10,54 @@
 
     <section>
         <h1>Get Started</h1>
-        <p>Movie Matchmaker is a fun and personalized way to discover films based on your mood.</p>
-        <p>Whether you're feeling emotional, adventurous, or want something feel-good, our app helps you find the perfect movie.</p>
-        <p>Explore genres, save your favorites, and get inspired by a daily motivational quote.</p>
-        <a href="/signUp">Start Matching</a>
+        <div class="hero-text">
+            <p>Movie Matchmaker is a fun and personalized way to discover films based on your mood.</p>
+            <p>Whether you're feeling emotional, adventurous, or want something feel-good, our app helps you find the perfect movie.</p>
+            <p>Explore genres, save your favorites, and get inspired by a daily motivational quote.</p>
+        </div>
+        <a class="button-anchor" href="/signUp">Start Matching</a>
     </section>
 
     <section>
-        <h2 class="mb-3">Random Picks</h2>
+        <h2>Random Picks</h2>
         <%
             const max = 20;
             const count = 6;
             const usedIndices = new Set();
-
             while (usedIndices.size < count) {
                 const randIndex = Math.floor(Math.random() * max);
                 usedIndices.add(randIndex);
             }
-
             const randomIndices = Array.from(usedIndices);
         %>
-        <div>
-            <% randomIndices.forEach(index => { %>
-                <% if (popularMovies.results[index] && popularMovies.results[index].poster_path) { %>
-                    <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>" class="img-fluid rounded" alt="Movie Poster">
-                <% } %>
-            <% }) %>
-        </div>
-    </section>
-
-    <section>
-        <h2>Find a Mood</h2>
-        <form action="/mood" method="POST">
-            <input type="text" name="username" placeholder="Username" required>
-            <button type="submit"><i class="bi bi-search"></i></button>
-        </form>
-    </section>
-
-    <hr class="border-secondary">
-
-    <section class="mb-3">
-        <h2 class="mb-3">Trending Movies</h2>
-        <div class="row g-3 text-center">
-            <% for (let i = 0; i < 6; i++) { %>
-                <div class="col-6 col-sm-4 col-md-2">
-                    <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>" class="img-fluid rounded" alt="Trending Movie">
-                </div>
+        <div class="gallery">
+        <% randomIndices.forEach(index => { %>
+            <% if (popularMovies.results[index] && popularMovies.results[index].poster_path) { %>
+                <div class="gallery-item"><a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>"></a></div>
             <% } %>
+        <% }) %>
         </div>
     </section>
 
-    <hr class="border-secondary">
+    <% 
+    const shuffled = allMoods.sort(() => 0.5 - Math.random());
+    const moods = shuffled.slice(0, 4);
+    %>
+    <section>
+        <h1>Explore Moods</h1>
+        <div class="mood-container">
+        <% moods.forEach(mood => { %>
+            <a href="<%= mood.id %>"><%= mood.name %></a>
+        <% }) %>
+        </div>
+    </section>
 
     <section>
-        <h2 class="mb-3">Recommended Moods</h2>
-        <%         
-            const shuffled = allMoods.sort(() => 0.5 - Math.random());
-            const moods = shuffled.slice(0, 4);
-        %>
-        <div class="row g-3">
-
-            <% moods.forEach(mood => { %>
-                <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card bg-dark text-white h-100">
-                        <div class="card-body d-flex flex-column justify-content-between">
-                            <a href="<%= mood.id %>" class="btn btn-outline-light mt-3"><%= mood.name %></a>
-                        </div>
-                    </div>
-                </div>
-            <% }) %>
-
+        <h2>Trending Movies</h2>
+        <div class="gallery">
+            <% for (let i = 0; i < 6; i++) { %>
+                <div class="gallery-item"><a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>"></a></div>
+            <% } %>
         </div>
     </section>
 
