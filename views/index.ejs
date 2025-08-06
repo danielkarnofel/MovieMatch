@@ -17,41 +17,53 @@
     <section>
         <h1>Your Top Pick</h1>
         <!--TODO: Should this just be the most popular movie or are we implementing some kind of recommendation algorithm?-->
-        <a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[0].poster_path %>"></a>
-        <p><%= popularMovies.results[0].title %></p>
-        <p><%= popularMovies.results[0].overview %></p>
+        <div class="highlight">
+            <img src="img/example_poster.webp">
+            <div>
+                <h3><%= popularMovies.results[0].title %></h3>
+                <p><%= popularMovies.results[0].overview %></p>
+            </div>
+        </div>
     </section>
 
     <section>
         <h1>Recommended Moods</h1>
         <!--TODO: Generate actual recommended moods, either from user's mood list or random selections-->
-        <% for (let i = 0; i < 5; i++) { %>
+        <div class="mood-container">
+        <% for (let i = 0; i < 3; i++) { %>
             <a href="/mood">Feel good</a>
+            <a href="/mood">Heartwarming</a>
+            <a href="/mood">Cerebral</a>
         <% } %>
+        </div>
     </section>
     
     <section>
         <h1>Quote of the Day</h1>
-        <!--TODO: Use the random quote API, if possible a way to get movie quotes only would be cool-->
-        <p>“Be yourself; everyone else is already taken.”</p>
-        <em>― Oscar Wilde</em>
+        <!--TODO: Use the random quote API-->
+        <div class="quote">
+            <p>“Be yourself; everyone else is already taken.”<br><em>― Oscar Wilde</em></p>
+        </div>
     </section>
     
     <section>
         <h1>Trending Movies</h1>
+        <div class="gallery">
         <% for (let i = 0; i < 5; i++) { %>
-            <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>">
+            <div class="gallery-item"><a href="/movie"><img src="img/example_poster.webp"></a></div>
         <% } %>
+        </div>
     </section>
     
     <!--TODO: This should populate all of the user's lists-->
     <% for (let i = 0; i < 5; i++) { %>
     <section>
         <a href="/list"><h1>List Title</h1></a>
+        <div class="gallery">
         <% for (let i = 0; i < 5; i++) { %>
-            <!--TODO: Replace this with the actual list content-->
-            <a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>"></a>
+            <div class="gallery-item"><a href="/movie"><img src="img/example_poster.webp"></a></div>
         <% } %>
+        </div>
     </section>
     <% } %>
 

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <%- include('partials/head.ejs') %>
-<body class="bg-dark text-white">
+<body>
 <%- include('partials/header.ejs') %>
 
-<main class="container my-3 py-3">
+<main>
 
-    <section class="mb-3 text-center">
-        <h1 class="mb-3">Get Started</h1>
+    <!--Content assumes user is NOT logged in-->
+
+    <section>
+        <h1>Get Started</h1>
         <p>Movie Matchmaker is a fun and personalized way to discover films based on your mood.</p>
         <p>Whether you're feeling emotional, adventurous, or want something feel-good, our app helps you find the perfect movie.</p>
         <p>Explore genres, save your favorites, and get inspired by a daily motivational quote.</p>
-        <a href="/" class="btn btn-primary mt-3">Start Matching</a>
+        <a href="/signUp">Start Matching</a>
     </section>
 
-    <hr class="border-secondary">
-
-    <section class="mb-3">
-        <h2 class="mb-3">Random Pick</h2>
+    <section>
+        <h2 class="mb-3">Random Picks</h2>
         <%
             const max = 20;
             const count = 6;
@@ -30,29 +30,20 @@
 
             const randomIndices = Array.from(usedIndices);
         %>
-
-        <div class="row g-3 text-center">
+        <div>
             <% randomIndices.forEach(index => { %>
                 <% if (popularMovies.results[index] && popularMovies.results[index].poster_path) { %>
-                    <div class="col-6 col-sm-4 col-md-2">
-                        <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>" class="img-fluid rounded" alt="Movie Poster">
-                    </div>
+                    <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>" class="img-fluid rounded" alt="Movie Poster">
                 <% } %>
             <% }) %>
         </div>
     </section>
 
-    <hr class="border-secondary">
-
-    <section class="mb-3 text-center">
-        <h2 class="mb-3">Find a Mood</h2>
-        <form action="/mood" method="POST" class="mt-3 d-flex justify-content-center">
-            <div class="input-group" style="max-width: 400px;">
-                <input type="text" name="username" placeholder="Username" class="form-control" required>
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i>
-                </button>
-            </div>
+    <section>
+        <h2>Find a Mood</h2>
+        <form action="/mood" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <button type="submit"><i class="bi bi-search"></i></button>
         </form>
     </section>
 
