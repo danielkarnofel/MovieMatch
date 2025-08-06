@@ -186,23 +186,6 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Reviews routes
-app.get('/reviews/:movieId', async (req, res) => {
-  const movieId = req.params.movieId;
-  const sql = 'SELECT * FROM reviews WHERE movie_title = ?';
-  const [rows] = await pool.query(sql, [movieId]);
-  res.render('reviews', { reviews: rows, movieId });
-});
-
-app.post('/reviews/:movieId', async (req, res) => {
-  if (!req.session.username) return res.status(401).send('Not authenticated');
-  const movieId = req.params.movieId;
-  const { rating, comment } = req.body;
-  const sql = `INSERT INTO reviews (user_name, movie_title, rating, comment) VALUES (?, ?, ?, ?)`;
-  await pool.query(sql, [req.session.username, movieId, rating, comment]);
-  res.redirect(`/reviews/${movieId}`);
-});
-
 /* API */
 /****************************************************************************************************/
 function isAuthenticated(req, res, next) {
@@ -354,6 +337,44 @@ app.post('/api/movie/favorites/delete/:id', isAuthenticated, async (req, res) =>
         await pool.query(sql, [id, req.session.username]);
 
         res.status(201).json({ status: "Movie removed from favorites successfully!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+// Reviews routes
+app.get('/api/movie/reviews/:movieTitle', isAuthenticated, async (req, res) => {
+    try {
+        const movieTitle = req.params.movieTitle;
+        const sql = 'SELECT * FROM reviews WHERE movie_title = ?';
+        const [rows] = await pool.query(sql, [movieTitle]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No reviews found for this movie." });
+        }
+
+        res.status(200).json(rows);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post('/api/movie/reviews/:movieTitle', isAuthenticated, async (req, res) => {
+    try {
+        const movieTitle = req.params.movieTitle;
+        const { rating, comment } = req.body;
+        const sql = `INSERT INTO reviews (user_name, movie_title, rating, comment) VALUES (?, ?, ?, ?)`;
+
+        if (isNaN(rating) || comment == ``) {
+            return res.status(400).json({ error: "Information provided is invalid." });
+        }
+
+        await pool.query(sql, [req.session.username, movieTitle, rating, comment]);
+
+        res.status(201).json({ status: "Movie review added successfully!" });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: "Server error" });
