@@ -1,0 +1,33 @@
+
+header {
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+main {
+    padding: 1rem;
+}
+
+section {
+    padding: 1rem;
+    margin: 0 0 1rem 0;
+    background-color: var(--color-md);
+    border-radius: 0.5rem;
+}
+
+footer {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}

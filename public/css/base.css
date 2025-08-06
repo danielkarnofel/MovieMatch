@@ -1,0 +1,44 @@
+
+:root {
+    font-family: "Open Sans", sans-serif;
+
+    --color-d: #2A2A2A;
+    --color-md: #555555;
+    --color-m: #7F7F7F;
+    --color-ml: #AAAAAA;
+    --color-l: #D4D4D4;
+    --color-ad: #FF5555;
+    --color-a: #FF7F7F;
+    --color-al: #FFAAAA;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: white;
+    background-color: var(--color-d);
+}
+
+/* Global Styles */
+
+input {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
+input::placeholder {
+    color: var(--color-ml);
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+a:visited {
+    color: white;
+}

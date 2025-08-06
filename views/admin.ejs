@@ -4,16 +4,21 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>Admin Tools</h1>
+<main>
 
-<button>View Users</button>
-<button>Create User</button><br>
-<button>View Lists</button>
-<button>Create List</button><br>
-<button>View Moods</button>
-<button>Create Mood</button><br>
-<hr>
-<h2>Results</h2>
+<section>
+<h1>Admin Tools</h1>
+<div class="admin-buttons-container">
+    <button class="btn">View Users</button>
+    <button class="btn">Create User</button><br>
+    <button class="btn">View Lists</button>
+    <button class="btn">Create List</button><br>
+    <button class="btn">View Moods</button>
+    <button class="btn">Create Mood</button><br>
+</div>
+</section>
+
+</main>
 
 <%- include('partials/footer.ejs') %>
 </body>
