@@ -381,6 +381,28 @@ app.post('/api/movie/reviews/:movieTitle', isAuthenticated, async (req, res) => 
     }
 });
 
+// Quote of the day routes
+app.get('/api/quote', async (req, res) => {
+    try {
+        const quoteAPI = `http://api.quotable.io/quotes/random`;
+
+        const response = await fetch(quoteAPI);
+        const data = await response.json();
+
+        if (data.length === 0) {
+            return res.status(404).json({ error: "No quotes found." });
+        }
+
+	const quote = {content: data[0].content, author: data[0].author};
+
+        res.status(200).json(quote);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
 /* Test routes */
 /****************************************************************************************************/
 
