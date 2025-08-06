@@ -210,30 +210,6 @@ app.post('/favorites/delete/:id', async (req, res) => {
   res.redirect('/favorites');
 });
 
-// Lists routes
-app.get('/lists', async (req, res) => {
-  if (!req.session.username) return res.redirect('/login');
-  const sql = 'SELECT * FROM custom_lists WHERE user_name = ?';
-  const [rows] = await pool.query(sql, [req.session.username]);
-  res.render('lists', { lists: rows });
-});
-
-app.post('/lists', async (req, res) => {
-  if (!req.session.username) return res.status(401).send('Not authenticated');
-  const { list_name, description } = req.body;
-  const sql = `INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)`;
-  await pool.query(sql, [req.session.username, list_name, description]);
-  res.redirect('/lists');
-});
-
-app.get('/lists/:id', async (req, res) => {
-  if (!req.session.username) return res.redirect('/login');
-  const listId = req.params.id;
-  const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
-  const [rows] = await pool.query(sql, [listId]);
-  res.render('listDetails', { listMovies: rows });
-});
-
 // Reviews routes
 app.get('/reviews/:movieId', async (req, res) => {
   const movieId = req.params.movieId;
@@ -264,16 +240,90 @@ function isAuthenticated(req, res, next) {
 
 app.get('/api/search/:query', isAuthenticated, async(req, res) => {
     try {
-    const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
+        const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
 
-    const response = await fetch(movieAPI);
-    const data = await response.json();
+        const response = await fetch(movieAPI);
+        const data = await response.json();
 
-    if (data.length === 0) {
-        return res.status(404).json({ error: "Search found 0 matches." });
+        if (data.length === 0) {
+            return res.status(404).json({ error: "Search found 0 matches." });
+        }
+
+        res.status(200).json(data);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
     }
 
-    res.json(data);
+});
+
+// Lists routes
+app.get('/api/lists', isAuthenticated, async (req, res) => {
+    try {
+        const sql = `SELECT list_id, user_name, list_name, description, created_at 
+                     FROM custom_lists WHERE user_name = ?`;
+        const [rows] = await pool.query(sql, [req.session.username]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "List not found." });
+        }
+
+        res.status(200).json(rows);
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post('/api/lists', isAuthenticated, async (req, res) => {
+    try {
+        const { list_name, description } = req.body;
+        const sql = `INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)`;
+
+        if (list_name == ``) {
+            return res.status(400).json({ error: "Information provided is invalid." });
+        }
+
+        await pool.query(sql, [req.session.username, list_name, description]);
+
+        res.status(201).json({ status: `List successfully addded.` });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.get('/api/lists/:id', isAuthenticated, async (req, res) => {
+    try {
+        const listId = req.params.id;
+        const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
+        const [rows] = await pool.query(sql, [listId]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No movies found in the list." });
+        }
+
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post('/api/movie/list', isAuthenticated, async(req, res) => {
+    try {
+        const { listId, movieTitle, posterUrl } = req.body;
+        const sql = `INSERT INTO list_movies (list_id, movie_title, poster_url) VALUES (?, ?, ?);`;
+
+        if (isNaN(listId) || movieTitle == ``) {
+            return res.status(400).json({ error: "Information provided is invalid." });
+        }
+
+        const [rows] = await conn.query(sql, [listId, movieTitle, posterUrl]);
+
+        res.status(201).json({ status: "Movie added successfully!" });
 
     } catch (err) {
         console.error(err);
