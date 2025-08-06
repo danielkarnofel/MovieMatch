@@ -186,30 +186,6 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// Favorites routes
-app.get('/favorites', async (req, res) => {
-  if (!req.session.username) return res.redirect('/login');
-  const sql = 'SELECT * FROM favorites WHERE user_name = ?';
-  const [rows] = await pool.query(sql, [req.session.username]);
-  res.render('favorites', { favorites: rows });
-});
-
-app.post('/favorites', async (req, res) => {
-  if (!req.session.username) return res.status(401).send('Not authenticated');
-  const { movie_title, genre, poster_url } = req.body;
-  const sql = `INSERT INTO favorites (user_name, movie_title, genre, poster_url) VALUES (?, ?, ?, ?)`;
-  await pool.query(sql, [req.session.username, movie_title, genre, poster_url]);
-  res.redirect('/favorites');
-});
-
-app.post('/favorites/delete/:id', async (req, res) => {
-  if (!req.session.username) return res.status(401).send('Not authenticated');
-  const id = req.params.id;
-  const sql = `DELETE FROM favorites WHERE id = ? AND user_name = ?`;
-  await pool.query(sql, [id, req.session.username]);
-  res.redirect('/favorites');
-});
-
 // Reviews routes
 app.get('/reviews/:movieId', async (req, res) => {
   const movieId = req.params.movieId;
@@ -329,7 +305,59 @@ app.post('/api/movie/list', isAuthenticated, async(req, res) => {
         console.error(err);
         res.status(500).json({ error: "Server error" });
     }
+});
 
+// Favorites routes
+app.get('/api/movie/favorites', isAuthenticated, async (req, res) => {
+    try {
+        const sql = 'SELECT * FROM favorites WHERE user_name = ?';
+        const [rows] = await pool.query(sql, [req.session.username]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ error: "No favorites found." });
+        }
+
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post('/api/movie/favorites', isAuthenticated, async (req, res) => {
+    try {
+        const { movieTitle, genre, posterUrl } = req.body;
+        const sql = `INSERT INTO favorites (user_name, movie_title, genre, poster_url) VALUES (?, ?, ?, ?)`;
+
+        if (movieTitle == ``) {
+            return res.status(400).json({ error: "Information provided is invalid." });
+        }
+
+        await pool.query(sql, [req.session.username, movieTitle, genre, posterUrl]);
+
+        res.status(201).json({ status: "Movie added to favorites successfully!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
+});
+
+app.post('/api/movie/favorites/delete/:id', isAuthenticated, async (req, res) => {
+    try {
+        const id = req.params.id;
+        const sql = `DELETE FROM favorites WHERE id = ? AND user_name = ?`;
+
+        if (isNaN(id)) {
+            return res.status(400).json({ error: "Information provided is invalid." });
+        }
+
+        await pool.query(sql, [id, req.session.username]);
+
+        res.status(201).json({ status: "Movie removed from favorites successfully!" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Server error" });
+    }
 });
 
 /* Test routes */
