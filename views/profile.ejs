@@ -6,25 +6,39 @@
 
     <% if (!isAuthenticated) { %>
         <p>You are not logged in.</p>
-        <!--Should redirect to login page-->
+        <!--Should redirect to login or home page-->
     <% } %>
 
     <main>
-        <h1>Hi <%= username %>!</h1>
-        <p><strong>Username:</strong><%= username %></p>
-        <p><strong>Email:</strong><%= email %></p>
+        <h1>Hi <%= username %>!</h1><br>
 
-        <h2>My Lists</h2> <button>Create List</button>
-        <!--Example list entry-->
-        <h3>List Title 1</h3><button>Edit</button><button>Delete</button>
-        <a href="/movie"><img src="img/example_poster.webp"></a><a href="/movie"><img src="img/example_poster.webp"></a>
-        <!--Example list entry-->
-        <h3>List Title 2</h3><button>Edit</button><button>Delete</button>
-        <a href="/movie"><img src="img/example_poster.webp"></a><a href="/movie"><img src="img/example_poster.webp"></a>
+        <section>
+            <h2>Account Info:</h2>
+            <p><strong>Username: </strong><%= username %></p>
+            <p><strong>Email: </strong><%= email %></p>
+        </section>
 
-        <h2>My Moods</h2> <button>Create Mood</button>
-        <!--Example mood entries-->
-        <a href="/mood">Feel good</a><a href="/mood">Feel good</a><a href="/mood">Feel good</a>
+        <div class="section-title"><h2>My Lists</h2> <button class="btn">Create List</button></div>
+
+        <!--Example list entry-->
+        <section>
+            <div class="section-title"><h3>List Title 1</h3><button class="btn">Edit</button><button class="btn">Delete</button></div>
+            <div class="gallery">
+            <% for (let i = 0; i < 5; i++) { %>
+                <div class="gallery-item"><a href="/movie"><img src="img/example_poster.webp"></a></div>
+            <% } %>
+            </div>
+        </section>
+
+        <div class="section-title"><h2>My Moods</h2> <button class="btn">Create Mood</button></div>
+        <section>
+            <div class="mood-container">
+            <% for (let i = 0; i < 3; i++) { %>
+                <a href="/mood">Feel good</a>
+                <a href="/mood">Heartwarming</a>
+                <a href="/mood">Cerebral</a>
+            <% } %>
+        </section>
     </main>
 
 <%- include("partials/footer.ejs") %>

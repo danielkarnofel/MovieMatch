@@ -5,19 +5,15 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-    <div id="search" class="container mt-4 text-white">
-        <h1 class="mb-4">Search by keyword</h1>
-
-        <div class="input-group mb-3">
-            <input type="text" id="searchInput" class="form-control" placeholder="Search movies...">
-            <button id="searchButton" class="btn btn-primary">Search</button>
+    <div class="search-input-container">
+        <h1>Search by keyword</h1>
+        <div>
+            <input type="text" id="search-input" placeholder="Search movies...">
+            <button id="search-button" class="btn">Search</button>
         </div>
     </div>
-
-    <div id="resultsList" class="container mt-4 text-white d-none">
-        <div id="results" class="row equal-height-cards"></div>
-    </div>
-    <br>
+    
+    <div class="search-result-list"></div>
 </main>
 
 <%- include('partials/footer.ejs') %>

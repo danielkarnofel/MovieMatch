@@ -4,20 +4,21 @@
 <body>
 
     <div class="signup-login-container">
-    <img src="img/logo.svg">
-    <h1>MovieMatch</h1>
+        <img src="img/logo.svg">
+        <h1>MovieMatch</h1>
+        
+        <% if (isAuthenticated) { %>
+            <h2>You are already logged in!</h2>
+        <% } %>
 
-    <% if (isAuthenticated) { %>
-        <h2>You are already logged in!</h2>
-    <% } %>
+        <form action="/login" method="POST">
+            <input type="text" name="username" placeholder="Username" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button class="btn">Login</button>
+        </form>
 
-    <form action="/login" method="POST">
-        <input type="text" name="username" placeholder="Username" required>
-        <input type="password" name="password" placeholder="Password" required>
-        <button>Login</button>
-    </form>
-
-    <a href="/signup">New user? Sign up here</a>
+        <a class="link" href="/signup">New user? Sign up here</a>
+        <a class="link" href="/">Stay logged out</a>
     </div>
 
 </body>

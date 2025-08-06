@@ -1,4 +1,5 @@
 <header>
+
     <a class="logo" href="/">
         <h1>MovieMatch</h1><img src="img/logo.svg">
     </a>
@@ -6,23 +7,23 @@
     <nav>
         <% if (isAuthenticated) { %>
             
-            <a href="/search"><span class="material-symbols-outlined">search</span></a>
-
+            <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
             <div class="dropdown">
-                <div class="dropdown-toggle" href="/search"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></div>
+                <a class="nav-link dropdown-toggle" href="/profile"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></a>
                 <div class="dropdown-content">
-                    <a href="/">Home</a>
-                    <a href="/profile">Profile</a>
-                    <a href="/admin">Admin</a>
-                    <a href="/logout">Logout</a>
+                    <a class="nav-link" href="/">Home</a>
+                    <a class="nav-link" href="/admin">Admin</a>
+                    <a class="nav-link" href="/logout">Logout</a>
                 </div>
             </div>
 
         <% } else { %>
 
-            <a href="/search"><span class="material-symbols-outlined">search</span></a>
-            <a href="/">Home</a>
-            <a href="/login">Login</a>
+            <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/login">Login</a>
+
         <% } %>
     </nav>
+    
 </header>
