@@ -4,42 +4,36 @@
 <body>
 <%- include("partials/header.ejs") %>
 
-    <% if (!isAuthenticated) { %>
-        <p>You are not logged in.</p>
-        <!--Should redirect to login or home page-->
-    <% } %>
+<main>
+  <% if (typeof flash !== 'undefined') { %>
+    <div class="alert alert-success"><%= flash %></div>
+  <% } %>
 
-    <main>
-        <h1>Hi <%= username %>!</h1><br>
+  <h1>Hi <%= username %>!</h1>
+  <p><strong>Email:</strong> <%= email %></p>
 
-        <section>
-            <h2>Account Info:</h2>
-            <p><strong>Username: </strong><%= username %></p>
-            <p><strong>Email: </strong><%= email %></p>
-        </section>
+  <form action="/api/lists" method="POST">
+    <input type="text" name="list_name" placeholder="New list name" required>
+    <textarea name="description" placeholder="Description (optional)"></textarea>
+    <button type="submit">Create List</button>
+  </form>
 
-        <div class="section-title"><h2>My Lists</h2> <button class="btn">Create List</button></div>
-
-        <!--Example list entry-->
-        <section>
-            <div class="section-title"><h3>List Title 1</h3><button class="btn">Edit</button><button class="btn">Delete</button></div>
-            <div class="gallery">
-            <% for (let i = 0; i < 5; i++) { %>
-                <div class="gallery-item"><a href="/movie"><img src="img/example_poster.webp"></a></div>
-            <% } %>
-            </div>
-        </section>
-
-        <div class="section-title"><h2>My Moods</h2> <button class="btn">Create Mood</button></div>
-        <section>
-            <div class="mood-container">
-            <% for (let i = 0; i < 3; i++) { %>
-                <a href="/mood">Feel good</a>
-                <a href="/mood">Heartwarming</a>
-                <a href="/mood">Cerebral</a>
-            <% } %>
-        </section>
-    </main>
+  <h2>My Lists</h2>
+  <% if (!userLists || userLists.length === 0) { %>
+    <p>No lists yet.</p>
+  <% } else { %>
+    <% userLists.forEach(list => { %>
+      <section>
+        <h3><%= list.list_name %></h3>
+        <p><%= list.description %></p>
+        <a href="/list/<%= list.list_id %>">View List</a>
+        <form action="/api/lists/delete/<%= list.list_id %>" method="POST" style="display:inline;">
+          <button type="submit" onclick="return confirm('Delete this list?')">Delete</button>
+        </form>
+      </section>
+    <% }) %>
+  <% } %>
+</main>
 
 <%- include("partials/footer.ejs") %>
 </body>

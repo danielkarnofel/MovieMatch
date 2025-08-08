@@ -1,34 +1,28 @@
 import express from 'express';
 import mysql from 'mysql2/promise';
 import session from 'express-session';
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 
 const app = express();
 const apiKey = `715c996185f334cb145e6bc6b7859540`;
 
-/* Setup */
-/****************************************************************************************************/
-
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
-
-// for Express to get values using POST method
-app.use(express.urlencoded({extended:true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-    secret: 'moviematch123',
-    resave: false,
-    saveUninitialized: false
+  secret: 'moviematch123',
+  resave: false,
+  saveUninitialized: false
 }));
 
-// setting up database connection pool
 const pool = mysql.createPool({
-    host: "danielkarnofel.tech",
-    user: "danielk1_webuser",
-    password: "CSUMB-cst336",
-    database: "danielk1_moviematch",
-    connectionLimit: 10,
-    waitForConnections: true
+  host: "danielkarnofel.tech",
+  user: "danielk1_webuser",
+  password: "CSUMB-cst336",
+  database: "danielk1_moviematch",
+  connectionLimit: 10,
+  waitForConnections: true
 });
 const conn = await pool.getConnection();
 
@@ -38,409 +32,239 @@ app.use((req, res, next) => {
   next();
 });
 
+function isAuthenticated(req, res, next) {
+  if (!req.session.authenticated) {
+    res.redirect('/login');
+  } else {
+    next();
+  }
+}
+
 /* Home */
-/****************************************************************************************************/
-
 app.get('/', async (req, res) => {
-    const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
-    const urlPopularMovies = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
-    const responsePopularMovies = await fetch(urlPopularMovies);
-    const dataPopularMovies = await responsePopularMovies.json();
-    const responseGenre = await fetch(urlGenre);
-    const dataGenre = await responseGenre.json();
+  const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+  const urlPopularMovies = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
+  const responsePopularMovies = await fetch(urlPopularMovies);
+  const dataPopularMovies = await responsePopularMovies.json();
+  const responseGenre = await fetch(urlGenre);
+  const dataGenre = await responseGenre.json();
 
-    if (!req.session.authenticated) {
-        res.render('indexlo', {
-            popularMovies: dataPopularMovies,
-            allMoods: dataGenre.genres,
-            isAuthenticated: req.session.userId
-        });
-    }
-    else {
-        res.render('index', {
-            popularMovies: dataPopularMovies,
-            isAuthenticated: req.session.userId
-        });
-    }
-});
+  if (!req.session.authenticated) {
+    res.render('indexlo', {
+      popularMovies: dataPopularMovies,
+      allMoods: dataGenre.genres
+    });
+  } else {
+    const [userListsWithMovies] = await pool.query(`
+      SELECT cl.list_id, cl.list_name, lm.movie_title, lm.poster_url
+      FROM custom_lists cl
+      LEFT JOIN list_movies lm ON cl.list_id = lm.list_id
+      WHERE cl.user_name = ?
+    `, [req.session.username]);
 
-/* Search */
-/****************************************************************************************************/
-
-app.get('/search', isAuthenticated, (req, res) => {
-    res.render('search');
+    res.render('index', {
+      popularMovies: dataPopularMovies,
+      userListsWithMovies
+    });
+  }
 });
 
 /* Profile */
-/****************************************************************************************************/
-
 app.get('/profile', isAuthenticated, async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login');
+  const [userInfo] = await pool.query('SELECT username, email FROM users WHERE id = ?', [req.session.userId]);
+  const [userLists] = await pool.query('SELECT * FROM custom_lists WHERE user_name = ?', [req.session.username]);
+
+  if (userInfo.length === 0) return res.redirect('/logout');
+
+  const flash = req.session.flash;
+  delete req.session.flash;
+
+  res.render('profile', {
+    username: userInfo[0].username,
+    email: userInfo[0].email,
+    userLists,
+    flash
+  });
+});
+
+/* Search */
+app.get('/search', isAuthenticated, async (req, res) => {
+  const [userLists] = await pool.query('SELECT list_id, list_name FROM custom_lists WHERE user_name = ?', [req.session.username]);
+  const flash = req.session.flash;
+  delete req.session.flash;
+  res.render('search', { userLists, flash });
+});
+
+/* Create List */
+app.post('/api/lists', isAuthenticated, async (req, res) => {
+  try {
+    const { list_name, description } = req.body;
+    if (!list_name) return res.redirect('/profile');
+
+    await pool.query('INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)', [
+      req.session.username, list_name, description
+    ]);
+
+    req.session.flash = "List created!";
+    res.redirect('/profile');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
   }
+});
 
-  const sql = 'SELECT username, email FROM users WHERE id = ?';
-  const [rows] = await pool.query(sql, [req.session.userId]);
-
-  if (rows.length === 0) {
-    return res.redirect('/logout'); 
+/* Delete List */
+app.post('/api/lists/delete/:id', isAuthenticated, async (req, res) => {
+  try {
+    await pool.query('DELETE FROM custom_lists WHERE list_id = ? AND user_name = ?', [
+      req.params.id,
+      req.session.username
+    ]);
+    res.redirect('/profile');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
   }
-
-  const { username, email } = rows[0];
-  res.render('profile', { username, email });
 });
 
-/* Admin */
-/****************************************************************************************************/
+/* Add Movie to List */
+app.post('/api/movie/list', isAuthenticated, async (req, res) => {
+  try {
+    const { listId, movieTitle, posterUrl, description } = req.body;
 
-app.get('/admin', (req, res) => {
-    res.render('admin');
+    if (isNaN(listId) || !movieTitle || !posterUrl) {
+      req.session.flash = "Invalid movie data.";
+      return res.redirect('/search');
+    }
+
+    const sql = `INSERT INTO list_movies (list_id, movie_title, poster_url, description) VALUES (?, ?, ?, ?)`;
+    await conn.query(sql, [listId, movieTitle, posterUrl, description]);
+
+    req.session.flash = `"${movieTitle}" added to your list!`;
+    res.redirect('/search');
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
 });
 
-/* List */
-/****************************************************************************************************/
 
-app.get('/list', (req, res) => {
-    res.render('list');
+
+
+/***************************************
+ * Remaining routes and API endpoints *
+ ***************************************/
+
+/* View List */
+app.get('/list/:id', isAuthenticated, async (req, res) => {
+  const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
+  const [movies] = await pool.query(sql, [req.params.id]);
+  res.render('list', { movies });
 });
 
-/* Movie */
-/****************************************************************************************************/
-
+/* Movie Page */
 app.get('/movie', (req, res) => {
-    res.render('movie');
+  const movieTitle = req.query.title || 'Unknown Title';
+  const posterUrl = req.query.poster || '';
+  const description = req.query.desc || 'No description available.';
+  res.render('movie', { movieTitle, posterUrl, description });
 });
 
-/* Mood */
-/****************************************************************************************************/
 
+/* Mood Page */
 app.get('/mood', (req, res) => {
-    res.render('mood');
+  res.render('mood');
 });
 
 /* Login */
-/****************************************************************************************************/
-
-// Show login page
 app.get('/login', (req, res) => {
-    res.render('login', { isAuthenticated: req.session.userId, error: undefined });
+  res.render('login', { isAuthenticated: req.session.userId, error: undefined });
 });
 
-// Handle login logic
 app.post('/login', async (req, res) => {
-    const { username, password } = req.body;
-    const sql = `SELECT * FROM users WHERE username = ?`;
-    const [rows] = await pool.query(sql, [username]);
+  const { username, password } = req.body;
+  const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
 
-    if (rows.length > 0) {
-        const user = rows[0];
-        const match = await bcrypt.compare(password, user.userPassword);
-
-        if (match) {
-            req.session.userId = user.id;
-            req.session.username = user.username;
-            req.session.authenticated = true;
-            return res.redirect('/');
-        }
+  if (rows.length > 0) {
+    const user = rows[0];
+    const match = await bcrypt.compare(password, user.userPassword);
+    if (match) {
+      req.session.userId = user.id;
+      req.session.username = user.username;
+      req.session.authenticated = true;
+      return res.redirect('/');
     }
+  }
 
-    res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
+  res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
 });
 
 /* Signup */
-/****************************************************************************************************/
-
-// Show signup page
 app.get('/signUp', (req, res) => {
-    res.render('signUp', { error: undefined });
+  res.render('signUp', { error: undefined });
 });
 
-// Handle signup logic
 app.post('/signup', async (req, res) => {
-    const { username, password, confirm } = req.body;
-    const email = `${username}@moviematch.fake`; // do w want a real email?
+  const { username, password, confirm } = req.body;
+  const email = `${username}@moviematch.fake`;
 
-    if (password != confirm) {
-        // TODO: Throw some kind of error here
-    }
+  if (password !== confirm) {
+    return res.render('signUp', { error: 'Passwords do not match.' });
+  }
 
-    try {
-        const hash = await bcrypt.hash(password, 10);
-        const sql = `INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)`;
-        await pool.query(sql, [username, hash, email]);
-
-        res.redirect('/login');
-    } catch (err) {
-        console.error(err);
-        res.render('signUp', { error: 'Username or email already exists.' });
-    }
+  try {
+    const hash = await bcrypt.hash(password, 10);
+    await pool.query('INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)', [username, hash, email]);
+    res.redirect('/login');
+  } catch (err) {
+    console.error(err);
+    res.render('signUp', { error: 'Username or email already exists.' });
+  }
 });
 
 /* Logout */
-/****************************************************************************************************/
-
-// Logout route
 app.get('/logout', (req, res) => {
-    req.session.destroy(() => {
-        res.redirect('/');
-    });
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
 });
 
-/* API */
-/****************************************************************************************************/
-function isAuthenticated(req, res, next) {
-    if (!req.session.authenticated) {
-        res.redirect(`/login`);
-    }
-    else {
-        next();
-    }
-}
-
-app.get('/api/search/:query', isAuthenticated, async(req, res) => {
-    try {
-        const movieAPI = `https://api.themoviedb.org/3/search/movie?query=${req.params.query}&api_key=${apiKey}`;
-
-        const response = await fetch(movieAPI);
-        const data = await response.json();
-
-        if (data.length === 0) {
-            return res.status(404).json({ error: "Search found 0 matches." });
-        }
-
-        res.status(200).json(data);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-
-});
-
-// Lists routes
-app.get('/api/lists', isAuthenticated, async (req, res) => {
-    try {
-        const sql = `SELECT list_id, user_name, list_name, description, created_at 
-                     FROM custom_lists WHERE user_name = ?`;
-        const [rows] = await pool.query(sql, [req.session.username]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ error: "List not found." });
-        }
-
-        res.status(200).json(rows);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.post('/api/lists', isAuthenticated, async (req, res) => {
-    try {
-        const { list_name, description } = req.body;
-        const sql = `INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)`;
-
-        if (list_name == ``) {
-            return res.status(400).json({ error: "Information provided is invalid." });
-        }
-
-        await pool.query(sql, [req.session.username, list_name, description]);
-
-        res.status(201).json({ status: `List successfully addded.` });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.get('/api/lists/:id', isAuthenticated, async (req, res) => {
-    try {
-        const listId = req.params.id;
-        const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
-        const [rows] = await pool.query(sql, [listId]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ error: "No movies found in the list." });
-        }
-
-        res.status(200).json(rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.post('/api/movie/list', isAuthenticated, async(req, res) => {
-    try {
-        const { listId, movieTitle, posterUrl } = req.body;
-        const sql = `INSERT INTO list_movies (list_id, movie_title, poster_url) VALUES (?, ?, ?);`;
-
-        if (isNaN(listId) || movieTitle == ``) {
-            return res.status(400).json({ error: "Information provided is invalid." });
-        }
-
-        const [rows] = await conn.query(sql, [listId, movieTitle, posterUrl]);
-
-        res.status(201).json({ status: "Movie added successfully!" });
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-// Favorites routes
-app.get('/api/movie/favorites', isAuthenticated, async (req, res) => {
-    try {
-        const sql = 'SELECT * FROM favorites WHERE user_name = ?';
-        const [rows] = await pool.query(sql, [req.session.username]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ error: "No favorites found." });
-        }
-
-        res.status(200).json(rows);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.post('/api/movie/favorites', isAuthenticated, async (req, res) => {
-    try {
-        const { movieTitle, genre, posterUrl } = req.body;
-        const sql = `INSERT INTO favorites (user_name, movie_title, genre, poster_url) VALUES (?, ?, ?, ?)`;
-
-        if (movieTitle == ``) {
-            return res.status(400).json({ error: "Information provided is invalid." });
-        }
-
-        await pool.query(sql, [req.session.username, movieTitle, genre, posterUrl]);
-
-        res.status(201).json({ status: "Movie added to favorites successfully!" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.post('/api/movie/favorites/delete/:id', isAuthenticated, async (req, res) => {
-    try {
-        const id = req.params.id;
-        const sql = `DELETE FROM favorites WHERE id = ? AND user_name = ?`;
-
-        if (isNaN(id)) {
-            return res.status(400).json({ error: "Information provided is invalid." });
-        }
-
-        await pool.query(sql, [id, req.session.username]);
-
-        res.status(201).json({ status: "Movie removed from favorites successfully!" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-// Reviews routes
-app.get('/api/movie/reviews/:movieTitle', isAuthenticated, async (req, res) => {
-    try {
-        const movieTitle = req.params.movieTitle;
-        const sql = 'SELECT * FROM reviews WHERE movie_title = ?';
-        const [rows] = await pool.query(sql, [movieTitle]);
-
-        if (rows.length === 0) {
-            return res.status(404).json({ error: "No reviews found for this movie." });
-        }
-
-        res.status(200).json(rows);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-app.post('/api/movie/reviews/:movieTitle', isAuthenticated, async (req, res) => {
-    try {
-        const movieTitle = req.params.movieTitle;
-        const { rating, comment } = req.body;
-        const sql = `INSERT INTO reviews (user_name, movie_title, rating, comment) VALUES (?, ?, ?, ?)`;
-
-        if (isNaN(rating) || comment == ``) {
-            return res.status(400).json({ error: "Information provided is invalid." });
-        }
-
-        await pool.query(sql, [req.session.username, movieTitle, rating, comment]);
-
-        res.status(201).json({ status: "Movie review added successfully!" });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-// Quote of the day routes
-app.get('/api/quote', async (req, res) => {
-    try {
-        const quoteAPI = `http://api.quotable.io/quotes/random`;
-
-        const response = await fetch(quoteAPI);
-        const data = await response.json();
-
-        if (data.length === 0) {
-            return res.status(404).json({ error: "No quotes found." });
-        }
-
-	const quote = {content: data[0].content, author: data[0].author};
-
-        res.status(200).json(quote);
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: "Server error" });
-    }
-});
-
-/* Test routes */
-/****************************************************************************************************/
-
-app.get("/dbTest", async(req, res) => {
-    const sql = "SELECT CURDATE()";
-    const [rows] = await conn.query(sql);
-    res.send(rows);
-});
-
-app.get("/apiTest", async(req, res) => {
-    
-    // This provides API configuration info like query parameters and image sizes
-    // const url = `https://api.themoviedb.org/3/configuration?api_key=${apiKey}&query=test`;
-
-    // List of genres
-    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&query=test`;
-
+/* Search API */
+app.get('/api/search/:query', isAuthenticated, async (req, res) => {
+  try {
+    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(req.params.query)}&api_key=${apiKey}`;
     const response = await fetch(url);
     const data = await response.json();
-    res.send(data);
+
+    if (!data.results || data.results.length === 0) {
+      return res.status(404).json({ error: "No results found." });
+    }
+
+    res.status(200).json(data);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
 
-/* Startup and shutdown */
-/****************************************************************************************************/
+/* Start Server */
+app.listen(3000, () => {
+  console.log("Express server running");
+});
 
-app.listen(3000, ()=>{
-    console.log("Express server running")
-}) 
-
-// clean up after shutdown
+/* Graceful Shutdown */
 process.on('SIGINT', async () => {
-    try {
-        console.log('\nShutting down server...');
-        await pool.end();  // Close MySQL pool
-        console.log('Database pool closed.');
-        process.exit(0);
-    } catch (err) {
-        console.error('Error closing the database pool:', err);
-        process.exit(1);
-    }
+  try {
+    console.log('\nShutting down server...');
+    await pool.end();
+    console.log('Database pool closed.');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error closing the database pool:', err);
+    process.exit(1);
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Express server running");
 });

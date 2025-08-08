@@ -4,30 +4,18 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>Movie Title</h1>
-<img src="img/example_poster.webp">
-<p>Movie description...</p>
-<p>Other movie info...</p>
+<main>
+  <h1><%= movieTitle %></h1>
+  <img src="<%= posterUrl %>" alt="<%= movieTitle %>">
+  <p><%= description %></p>
 
-<select>
-    <option>Select list</option>
-    <option>List title 1</option>
-    <option>List title 2</option>
-</select>
-<button>Add to list</button>
-
-<h2>Reviews</h2>
-
-<textarea></textarea>
-<button>Post review</button>
-
-<!--Example review-->
-<p>This is a review of a movie blah blah blah blah...</p>
-<p>- Username</p>
-
-<!--Example review-->
-<p>This is a review of a movie blah blah blah blah...</p>
-<p>- Username</p>
+  <h2>Add a Review</h2>
+  <form action="/api/movie/reviews/<%= movieTitle %>" method="POST">
+    <textarea name="comment" placeholder="Write your review here..." required></textarea>
+    <input type="number" name="rating" min="1" max="5" required>
+    <button type="submit">Post review</button>
+  </form>
+</main>
 
 <%- include('partials/footer.ejs') %>
 </body>

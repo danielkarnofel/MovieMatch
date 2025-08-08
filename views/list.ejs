@@ -4,15 +4,23 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>List Title</h1>
-<a href="/search">Add movie</a><br>
-<!--Example list items-->
-<a href="/movie"> <!--Each entry should link to the /movie view for that movie-->
-    <img src="img/example_poster.webp">
-</a>
-<a href="/movie"> <!--Each entry should link to the /movie view for that movie-->
-    <img src="img/example_poster.webp">
-</a>
+<main>
+  <h1>Movie List</h1>
+  <a href="/search">Add movie</a><br>
+
+  <% if (movies.length === 0) { %>
+    <p>This list is empty.</p>
+  <% } else { %>
+    <div class="gallery">
+      <% movies.forEach(movie => { %>
+        <a href="/movie?title=<%= encodeURIComponent(movie.movie_title) %>&poster=<%= movie.poster_url %>">
+            <p><%= movie.description || '' %></p>
+          <img src="<%= movie.poster_url %>" alt="<%= movie.movie_title %>">
+        </a>
+      <% }) %>
+    </div>
+  <% } %>
+</main>
 
 <%- include('partials/footer.ejs') %>
 </body>

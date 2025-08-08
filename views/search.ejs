@@ -5,18 +5,27 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-    <div class="search-input-container">
-        <h1>Search by keyword</h1>
-        <div>
-            <input type="text" id="search-input" placeholder="Search movies...">
-            <button id="search-button" class="btn">Search</button>
-        </div>
+  <% if (typeof flash !== 'undefined') { %>
+    <div class="alert alert-success"><%= flash %></div>
+  <% } %>
+
+  <div id="search" class="container">
+    <h1>Search by keyword</h1>
+    <div>
+      <input type="text" id="searchInput" placeholder="Search movies...">
+      <button id="searchButton">Search</button>
     </div>
-    
-    <div class="search-result-list"></div>
+  </div>
+
+  <div id="resultsList" class="container d-none">
+    <div id="results" class="row"></div>
+  </div>
 </main>
 
-<%- include('partials/footer.ejs') %>
+<script>
+  const userLists = <%- JSON.stringify(userLists || []) %>;
+</script>
 <script src="/js/search.js"></script>
+<%- include('partials/footer.ejs') %>
 </body>
 </html>

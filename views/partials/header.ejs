@@ -1,29 +1,25 @@
 <header>
+  <a class="logo" href="/">
+    <h1>MovieMatch</h1><img src="img/logo.svg">
+  </a>
 
-    <a class="logo" href="/">
-        <h1>MovieMatch</h1><img src="img/logo.svg">
-    </a>
+  <nav>
+    <% if (isAuthenticated) { %>
+      <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
 
-    <nav>
-        <% if (isAuthenticated) { %>
-            
-            <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
-            <div class="dropdown">
-                <a class="nav-link dropdown-toggle" href="/profile"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></a>
-                <div class="dropdown-content">
-                    <a class="nav-link" href="/">Home</a>
-                    <a class="nav-link" href="/admin">Admin</a>
-                    <a class="nav-link" href="/logout">Logout</a>
-                </div>
-            </div>
+      <div class="dropdown">
+        <a class="nav-link dropdown-toggle" href="#"><span class="material-symbols-outlined">arrow_drop_down</span><%= username %></a>
+        <div class="dropdown-content">
+          <a class="nav-link" href="/">Home</a>
+          <a class="nav-link" href="/profile">Profile</a>
+          <a class="nav-link" href="/logout">Logout</a>
+        </div>
+      </div>
 
-        <% } else { %>
-
-            <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
-            <a class="nav-link" href="/">Home</a>
-            <a class="nav-link" href="/login">Login</a>
-
-        <% } %>
-    </nav>
-    
+    <% } else { %>
+      <a class="nav-link" href="/search"><span class="material-symbols-outlined">search</span></a>
+      <a class="nav-link" href="/">Home</a>
+      <a class="nav-link" href="/login">Login</a>
+    <% } %>
+  </nav>
 </header>

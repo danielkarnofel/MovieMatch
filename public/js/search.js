@@ -1,60 +1,59 @@
+const searchButton = document.querySelector('#searchButton');
+const searchInput = document.querySelector('#searchInput');
+const resultsContainer = document.querySelector('#resultsList');
+const results = document.querySelector('#results');
 
-const searchInput = document.querySelector('#search-input');
-const searchButton = document.querySelector('#search-button');
-
-const searchResults = document.querySelector('.search-result-list');
-const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
-
-// searchInput.addEventListener('keydown', (e) => {
-//     if (e.key === 'Enter') {
-//         searchMovie(e);
-//     }
-// }); 
 searchButton.addEventListener('click', searchMovie);
+searchInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') searchMovie(e);
+});
 
-async function searchMovie(event) {
+async function searchMovie(e) {
+  e.preventDefault();
+  const query = searchInput.value.trim();
+  if (!query) return;
 
-    event.preventDefault();
+  resultsContainer.classList.remove('d-none');
+  results.innerHTML = '<p>Loading...</p>';
 
-    const query = searchInput.value.trim();
-    if (!query) return;
+  try {
+    const res = await fetch(`/api/search/${encodeURIComponent(query)}`);
+    const data = await res.json();
 
-    if (searchResults.classList.contains(`d-none`)) searchResults.classList.remove(`d-none`);
-
-    searchResults.innerHTML = '<p>Loading search information...</p>';
-
-    try {
-        const response = await fetch(`/api/search/${encodeURIComponent(query)}`);
-        const movies = await response.json();
-
-        if (!movies.results || movies.results.length === 0) {
-            searchResults.innerHTML = '<p>No results found.</p>';
-            return;
-        }
-
-        let html = '';
-
-        for (const movie of movies.results) {
-            const poster = movie.backdrop_path?.trim() ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : '/img/default.jpg';
-
-            html += `
-                    <a href="/movie" class="search-result-item">
-                        <h2>${movie.original_title}</h2>
-                        <p><strong>Release Date:</strong> ${movie.release_date || 'N/A'}</p>
-                        <p><strong>Adult Content:</strong> ${movie.adult ? 'Yes' : 'No'}</p>
-                        <p><strong>Language:</strong> ${languageNames.of(movie.original_language)}</p>
-                        <p><strong>Average Vote:</strong> ${movie.vote_average || 'N/A'}</p>
-                        <img src="${poster}" alt="${movie.original_title}">
-                        <p><strong>Overview:</strong> ${movie.overview || 'No overview available.'}</p>
-                    </a>
-                    `;
-        }
-
-        searchResults.innerHTML = html;
-        document.querySelector('.search-result-list').style.display = "block";
-
-    } catch (error) {
-        console.error('Error fetching movie data:', error);
-        searchResult.innerHTML = '<p>An error occurred. Please try again later.</p>';
+    if (!data.results || data.results.length === 0) {
+      results.innerHTML = '<p>No results found.</p>';
+      return;
     }
+
+    results.innerHTML = data.results.map(movie => {
+      const poster = movie.poster_path
+        ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+        : '/img/default.jpg';
+      const options = userLists.map(list =>
+        `<option value="${list.list_id}">${list.list_name}</option>`
+      ).join('');
+
+      return `
+        <div class="col-md-4 mb-4">
+          <div class="card">
+            <img src="${poster}" alt="${movie.title}" class="card-img-top">
+            <div class="card-body">
+              <h5>${movie.title}</h5>
+              <p>${movie.overview || 'No description available.'}</p>
+              <form action="/api/movie/list" method="POST">
+                <input type="hidden" name="movieTitle" value="${movie.title}">
+                <input type="hidden" name="posterUrl" value="${poster}">
+                <input type="hidden" name="description" value="${movie.overview}">
+                <select name="listId" required class="form-select mb-2">${options}</select>
+                <button type="submit" class="btn btn-sm btn-primary">Add to List</button>
+            </form>
+
+            </div>
+          </div>
+        </div>`;
+    }).join('');
+  } catch (err) {
+    console.error(err);
+    results.innerHTML = '<p>Error fetching data</p>';
+  }
 }
