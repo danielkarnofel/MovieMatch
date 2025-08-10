@@ -50,9 +50,22 @@ app.get('/', async (req, res) => {
   const dataGenre = await responseGenre.json();
 
   if (!req.session.authenticated) {
+    const max = 20;
+    const count = 6;
+    const usedIndices = new Set();
+
+    while (usedIndices.size < count) {
+        const randIndex = Math.floor(Math.random() * max);
+        usedIndices.add(randIndex);
+    }
+    const randomIndices = Array.from(usedIndices);
+
+    const shuffled = dataGenre.genres.sort(() => 0.5 - Math.random());
+    const moods = shuffled.slice(0, 4);
+
     res.render('indexlo', {
       popularMovies: dataPopularMovies,
-      allMoods: dataGenre.genres
+      moods, randomIndices
     });
   } else {
     const [userListsWithMovies] = await pool.query(`
@@ -61,10 +74,21 @@ app.get('/', async (req, res) => {
       LEFT JOIN list_movies lm ON cl.list_id = lm.list_id
       WHERE cl.user_name = ?
     `, [req.session.username]);
+    const quoteAPI = `http://api.quotable.io/quotes/random`;
+
+    const response = await fetch(quoteAPI);
+    const data = await response.json();
+
+    if (data.length === 0) {
+        return res.status(404).json({ error: "No quotes found." });
+    }
+
+    const quote = {content: data[0].content, author: data[0].author};
 
     res.render('index', {
       popularMovies: dataPopularMovies,
-      userListsWithMovies
+      userListsWithMovies,
+      quoteOfTheDay: quote
     });
   }
 });
@@ -147,8 +171,6 @@ app.post('/api/movie/list', isAuthenticated, async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-
 
 
 /***************************************
@@ -263,8 +285,4 @@ process.on('SIGINT', async () => {
     console.error('Error closing the database pool:', err);
     process.exit(1);
   }
-});
-
-app.listen(3000, () => {
-  console.log("Express server running");
 });

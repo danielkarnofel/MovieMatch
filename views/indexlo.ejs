@@ -20,16 +20,6 @@
 
     <section>
         <h2>Random Picks</h2>
-        <%
-            const max = 20;
-            const count = 6;
-            const usedIndices = new Set();
-            while (usedIndices.size < count) {
-                const randIndex = Math.floor(Math.random() * max);
-                usedIndices.add(randIndex);
-            }
-            const randomIndices = Array.from(usedIndices);
-        %>
         <div class="gallery">
         <% randomIndices.forEach(index => { %>
             <% if (popularMovies.results[index] && popularMovies.results[index].poster_path) { %>
@@ -38,11 +28,6 @@
         <% }) %>
         </div>
     </section>
-
-    <% 
-    const shuffled = allMoods.sort(() => 0.5 - Math.random());
-    const moods = shuffled.slice(0, 4);
-    %>
     <section>
         <h1>Explore Moods</h1>
         <div class="mood-container">
