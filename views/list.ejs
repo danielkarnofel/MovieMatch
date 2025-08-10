@@ -17,6 +17,11 @@
             <p><%= movie.description || '' %></p>
           <img src="<%= movie.poster_url %>" alt="<%= movie.movie_title %>">
         </a>
+        <form action="/api/lists/movie/delete" method="POST" style="display:inline;">
+          <input type="hidden" name="listId" value="<%= listId %>">
+          <input type="hidden" name="movieTitle" value="<%= movie.movie_title %>">
+          <button type="submit" onclick="return confirm('Delete this movie?')">Delete</button>
+        </form>
       <% }) %>
     </div>
   <% } %>

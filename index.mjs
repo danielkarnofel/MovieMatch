@@ -137,6 +137,15 @@ app.post('/api/lists', isAuthenticated, async (req, res) => {
   }
 });
 
+/* View List */
+app.get('/list/:listId', isAuthenticated, async (req, res) => {
+  const listId = req.params.listId;
+  const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
+  const [movies] = await pool.query(sql, [listId]);
+
+  res.render('list', { movies, listId });
+});
+
 /* Delete List */
 app.post('/api/lists/delete/:id', isAuthenticated, async (req, res) => {
   try {
@@ -172,17 +181,24 @@ app.post('/api/movie/list', isAuthenticated, async (req, res) => {
   }
 });
 
+/* Delete Movie from List */
+app.post('/api/lists/movie/delete', isAuthenticated, async (req, res) => {
+  try {
+    const { listId, movieTitle} = req.body;
+
+    await pool.query('DELETE FROM list_movies WHERE list_id = ? AND movie_title = ?', [ listId, movieTitle ]);
+    
+    res.redirect(`/list/${ listId }`);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 
 /***************************************
  * Remaining routes and API endpoints *
  ***************************************/
-
-/* View List */
-app.get('/list/:id', isAuthenticated, async (req, res) => {
-  const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
-  const [movies] = await pool.query(sql, [req.params.id]);
-  res.render('list', { movies });
-});
 
 /* Movie Page */
 app.get('/movie', (req, res) => {

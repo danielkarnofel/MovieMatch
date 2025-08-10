@@ -30,6 +30,9 @@
         <form action="/api/lists/delete/<%= list.list_id %>" method="POST" style="display:inline;">
           <button type="submit" onclick="return confirm('Delete this list?')">Delete</button>
         </form>
+        <form action="/list/<%= list.list_id %>" style="display:inline;">
+          <button type="submit">Movies</button>
+        </form>
       </section>
     <% }) %>
   <% } %>
