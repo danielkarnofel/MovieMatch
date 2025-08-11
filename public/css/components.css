@@ -124,13 +124,13 @@ a.link:hover {
 /* Hero */
 /********************************************************************************/
 
-.hero-text {
+.hero {
     display: flex;
     flex-direction: column;
     gap: 1rem;
 }
 
-.hero-text a {
+.hero a {
     width: fit-content;
 }
 
@@ -144,7 +144,26 @@ a.link:hover {
     display: flex;
     justify-content: left;
     gap: 1rem;
-    padding: 1rem;
+    padding: 1rem 0 0;
+}
+
+.highlight img {
+    height: 250px;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.highlight img:hover {
+    z-index: 1;
+    transform: scale(1.1);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.highlight-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
 }
 
 /********************************************************************************/
@@ -154,13 +173,13 @@ a.link:hover {
 /********************************************************************************/
 
 .quote {
-    padding: 1rem;
+    padding: 1rem 0 0;
 }
 
 .quote p {
     display: flex;
     flex-direction: column;
-    font-size: 2rem;
+    font-size: 1.5rem;
 }
 
 /********************************************************************************/
@@ -173,7 +192,7 @@ a.link:hover {
     overflow-x: auto;
     overflow-y: hidden;
     white-space: nowrap;
-    padding: 1rem;
+    padding: 1rem 0;
 }
 
 .gallery-item {
@@ -189,6 +208,10 @@ a.link:hover {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
 }
 
+.gallery-item img {
+    height: 250px;
+}
+
 /********************************************************************************/
 
 /********************************************************************************/
@@ -199,20 +222,19 @@ a.link:hover {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    padding: 1rem;
+    padding: 1rem 0 0;
 }
 
 .mood-container a {
+    color: white;
+    background-color: var(--color-ad);
     width: fit-content;
     border-radius: 1rem;
     padding: 1rem;
-    color: var(--color-d);
-    background-color: var(--color-l);
     font-weight: bold;
 }
 
 .mood-container a:hover {
-    color: white;
     background-color: var(--color-a);
 }
 
@@ -278,6 +300,69 @@ a.link:hover {
     display: grid;
     gap: 0.5rem;
     padding: 1rem;
+}
+
+/********************************************************************************/
+
+/********************************************************************************/
+/* Review Input */
+/********************************************************************************/
+
+.review-input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 0.5rem;
+}
+
+.review-input-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.5rem;
+}
+
+.review-input-container textarea {
+    padding: 1rem;
+}
+
+.review-input-container input[type="number"] {
+    width: fit-content;
+}
+
+.review-list-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 1rem;
+}
+
+.review-list-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 0.5rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/********************************************************************************/
+
+/********************************************************************************/
+/* Review Input */
+/********************************************************************************/
+
+.lists-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 /********************************************************************************/

@@ -6,20 +6,20 @@
 
 <main>
 
-  <section>
+  <section class="hero">
     <h1>Welcome to MovieMatch</h1>
-    <div class="hero-text">
-      <p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just need a feel-good escape.</p>
-      <p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood away.</p>
-    </div>
+    <p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just need a feel-good escape.</p>
+    <p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood away.</p>
   </section>
 
   <section>
-    <h1>Your Top Pick</h1>
     <% const topPick = popularMovies.results[0]; %>
-    <div class="highlight">
-      <img src="http://image.tmdb.org/t/p/w154<%= topPick.poster_path %>" alt="<%= topPick.title %>">
-      <div>
+    <h1>Your Top Pick</h1>
+    <div href="/movie" class="highlight">
+      <a href="/movie?title=<%= topPick.title %>&poster=<%= topPick.poster_path %>">
+        <img src="http://image.tmdb.org/t/p/w154<%= topPick.poster_path %>" alt="<%= topPick.title %>">
+      </a>
+      <div class="highlight-text">
         <h3><%= topPick.title %></h3>
         <p><%= topPick.overview %></p>
       </div>
@@ -68,7 +68,7 @@
 
   <% Object.keys(lists).forEach(listName => { %>
     <section>
-      <h2><%= listName %></h2>
+      <a href="/list"><h2><%= listName %></h2></a>
       <div class="gallery">
         <% lists[listName].forEach(movie => { %>
           <div class="gallery-item">
