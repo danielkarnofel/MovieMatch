@@ -6,11 +6,11 @@
 
 <main>
   <h1><%= movieTitle %></h1>
-  <img src="<%= posterUrl %>" alt="<%= movieTitle %>">
+  <img src="https://image.tmdb.org/t/p/w500<%= movieInfo.poster_path %>" alt="<%= movieInfo.title %>">
   <p><%= description %></p>
 
   <h2>Add a Review</h2>
-  <form action="/api/movie/reviews/<%= movieTitle %>" method="POST">
+  <form action="/api/movie/reviews/<%= movieInfo.title%>" method="POST">
     <textarea name="comment" placeholder="Write your review here..." required></textarea>
     <input type="number" name="rating" min="1" max="5" required>
     <button type="submit">Post review</button>

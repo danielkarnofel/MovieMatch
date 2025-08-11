@@ -23,7 +23,11 @@
         <div class="gallery">
         <% randomIndices.forEach(index => { %>
             <% if (popularMovies.results[index] && popularMovies.results[index].poster_path) { %>
-                <div class="gallery-item"><a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>"></a></div>
+                <div class="gallery-item">
+                    <a href="/movie/<%= popularMovies.results[index].id %>">
+                        <img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[index].poster_path %>">
+                    </a>
+                </div>
             <% } %>
         <% }) %>
         </div>
@@ -31,17 +35,21 @@
     <section>
         <h1>Explore Moods</h1>
         <div class="mood-container">
-        <% moods.forEach(mood => { %>
-            <a href="<%= mood.id %>"><%= mood.name %></a>
-        <% }) %>
+            <% moods.forEach(mood => { %>
+                <a href="/mood/<%= mood.id %>"><%= mood.name %></a>
+            <% }) %>
         </div>
     </section>
 
     <section>
         <h2>Trending Movies</h2>
         <div class="gallery">
-            <% for (let i = 0; i < 6; i++) { %>
-                <div class="gallery-item"><a href="/movie"><img src="http://image.tmdb.org/t/p/w154<%= popularMovies.results[i].poster_path %>"></a></div>
+            <% for (let i = 0; i < 7; i++) { %>
+                <div class="gallery-item">
+                    <a href="/movie/<%= trendingMovies.results[i].id %>">
+                        <img src="http://image.tmdb.org/t/p/w154<%= trendingMovies.results[i].poster_path %>">
+                    </a>
+                </div>
             <% } %>
         </div>
     </section>

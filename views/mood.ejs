@@ -4,24 +4,26 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>Mood name</h1>
-
-<h2>Genres</h2>
-<select><option>Select genre</option></select><button>Add</button><br>
-<span>Genre 1</span><span>Genre 2</span>
-
-<h2>Keywords</h2>
-<input type=text><button>Add</button><br>
-<span>Keyword 1<span><span>Keyword 2</span>
+<h1>Mood: <%= genre %></h1>
 
 <h2>Recommendations</h2>
 <!--Recommendations-->
-<a href="/movie">
-    <img src="img/example_poster.webp">
-</a>
-<a href="/movie">
-    <img src="img/example_poster.webp">
-</a>
+<div class="container my-4">
+  <% for (let i = 0; i < moodDict.length; i++) { %>
+    <div class="row mb-4 align-items-start">
+      <% const poster = moodDict[i].poster_path ? `https://image.tmdb.org/t/p/w500${moodDict[i].poster_path}` : '/img/default.jpg'; %>
+
+      <div class="col-md-4 col-sm-12 mb-3 mb-md-0">
+        <img src="<%= poster %>" alt="<%= moodDict[i].title %>" class="img-fluid rounded shadow-sm">
+      </div>
+
+      <div class="col-md-8 col-sm-12">
+        <h5><%= moodDict[i].title %></h5>
+        <p><%= moodDict[i].overview || 'No description available.' %></p>
+      </div>
+    </div>
+  <% } %>
+</div>
 
 <%- include('partials/footer.ejs') %>
 </body>

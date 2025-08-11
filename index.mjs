@@ -2,6 +2,7 @@ import express from 'express';
 import mysql from 'mysql2/promise';
 import session from 'express-session';
 import bcrypt from 'bcryptjs';
+import path from 'path';
 
 const app = express();
 const apiKey = `715c996185f334cb145e6bc6b7859540`;
@@ -42,16 +43,24 @@ function isAuthenticated(req, res, next) {
 
 /* Home */
 app.get('/', async (req, res) => {
+  const urlTrendingMovies = `https://api.themoviedb.org/3/trending/movie/day?page=1&&api_key=${apiKey}`;
   const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
   const urlPopularMovies = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
+  
+  const responseTrendingMovies = await fetch(urlTrendingMovies);
   const responsePopularMovies = await fetch(urlPopularMovies);
-  const dataPopularMovies = await responsePopularMovies.json();
   const responseGenre = await fetch(urlGenre);
+
+  const dataTrendingMovies = await responseTrendingMovies.json();
+  const dataPopularMovies = await responsePopularMovies.json();
   const dataGenre = await responseGenre.json();
+
+  const shuffled = dataGenre.genres.sort(() => 0.5 - Math.random());
+  const moods = shuffled.slice(0, 4);
 
   if (!req.session.authenticated) {
     const max = 20;
-    const count = 6;
+    const count = 7;
     const usedIndices = new Set();
 
     while (usedIndices.size < count) {
@@ -60,10 +69,8 @@ app.get('/', async (req, res) => {
     }
     const randomIndices = Array.from(usedIndices);
 
-    const shuffled = dataGenre.genres.sort(() => 0.5 - Math.random());
-    const moods = shuffled.slice(0, 4);
-
     res.render('indexlo', {
+      trendingMovies: dataTrendingMovies,
       popularMovies: dataPopularMovies,
       moods, randomIndices
     });
@@ -86,8 +93,9 @@ app.get('/', async (req, res) => {
     const quote = {content: data[0].content, author: data[0].author};
 
     res.render('index', {
+      trendingMovies: dataTrendingMovies,
       popularMovies: dataPopularMovies,
-      userListsWithMovies,
+      moods, userListsWithMovies,
       quoteOfTheDay: quote
     });
   }
@@ -195,25 +203,6 @@ app.post('/api/lists/movie/delete', isAuthenticated, async (req, res) => {
   }
 });
 
-
-/***************************************
- * Remaining routes and API endpoints *
- ***************************************/
-
-/* Movie Page */
-app.get('/movie', (req, res) => {
-  const movieTitle = req.query.title || 'Unknown Title';
-  const posterUrl = req.query.poster || '';
-  const description = req.query.desc || 'No description available.';
-  res.render('movie', { movieTitle, posterUrl, description });
-});
-
-
-/* Mood Page */
-app.get('/mood', (req, res) => {
-  res.render('mood');
-});
-
 /* Login */
 app.get('/login', (req, res) => {
   res.render('login', { isAuthenticated: req.session.userId, error: undefined });
@@ -285,6 +274,39 @@ app.get('/api/search/:query', isAuthenticated, async (req, res) => {
   }
 });
 
+/* Mood Page */
+app.get('/mood/:moodId', async (req, res) => {
+  const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+  const responseGenre = await fetch(urlGenre);
+  const dataGenre = await responseGenre.json();
+
+  let page = 1;
+  const moodId = parseInt(req.params.moodId);
+  const moodDict = [];
+  let genre = ``;
+
+  for (let g = 0; g < dataGenre.genres.length; g++) {
+    if (parseInt(dataGenre.genres[g].id) == moodId) {
+      genre = dataGenre.genres[g].name;
+    }
+  }
+
+  while (moodDict.length < 12) {
+    const urlWeekTrending = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&&api_key=${apiKey}`;
+    const responseWeekTrending = await fetch(urlWeekTrending);
+    const dataWeekTrending = await responseWeekTrending.json();
+
+    for (let i = 0; i < dataWeekTrending.results.length && moodDict.length < 12; i++) {
+      if (dataWeekTrending.results[i].genre_ids.includes(moodId)) {
+        moodDict.push(dataWeekTrending.results[i]);
+      }
+    }
+    page++;
+  }
+
+  res.render('mood', { genre, moodDict });
+});
+
 /* Start Server */
 app.listen(3000, () => {
   console.log("Express server running");
@@ -301,4 +323,33 @@ process.on('SIGINT', async () => {
     console.error('Error closing the database pool:', err);
     process.exit(1);
   }
+});
+
+/***************************************
+ * Remaining routes and API endpoints *
+ ***************************************/
+
+/* Movie Page */
+app.get('/movie/:id', async (req, res) => {
+  let page = 1;
+  let found = false;
+  const movieId = parseInt(req.params.movieId);
+  let movieInfo = {};
+
+  while (!found) {
+    const urlMovie= `https://api.themoviedb.org/3/trending/movie/week?page=${page}&&api_key=${apiKey}`;
+    const responseMovie = await fetch(urlMovie);
+    const dataMovie = await responseMovie.json();
+
+    for (let i = 0; i < dataWeekTrending.results.length && moodDict.length < 12; i++) {
+      if (dataMovie.results[i].id == movieId) {
+        movieInfo = dataMovie.results[i];
+      }
+    }
+    page++;
+  }
+
+  console.log(movieInfo);
+
+  res.render('movie', { movieInfo });
 });

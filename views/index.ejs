@@ -29,9 +29,9 @@
   <section>
     <h1>Recommended Moods</h1>
     <div class="mood-container">
-      <a href="/mood">Feel good</a>
-      <a href="/mood">Heartwarming</a>
-      <a href="/mood">Cerebral</a>
+      <% moods.forEach(mood => { %>
+        <a href="/mood/<%= mood.id %>"><%= mood.name %></a>
+      <% }) %>
     </div>
   </section>
 
@@ -45,11 +45,11 @@
   <section>
     <h1>Trending Movies</h1>
     <div class="gallery">
-      <% for (let i = 0; i < 6; i++) { %>
-        <% const movie = popularMovies.results[i]; %>
+      <% for (let i = 0; i < 7; i++) { %>
+        <% const movie = trendingMovies.results[i]; %>
         <% if (movie && movie.poster_path) { %>
           <div class="gallery-item">
-            <a href="/movie?title=<%= movie.title %>&poster=<%= movie.poster_path %>">
+            <a href="/movie/<%= movie.id %>">
               <img src="http://image.tmdb.org/t/p/w154<%= movie.poster_path %>" alt="<%= movie.title %>">
             </a>
           </div>
