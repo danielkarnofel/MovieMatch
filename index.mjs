@@ -307,28 +307,6 @@ app.get('/mood/:moodId', async (req, res) => {
   res.render('mood', { genre, moodDict });
 });
 
-/* Start Server */
-app.listen(3000, () => {
-  console.log("Express server running");
-});
-
-/* Graceful Shutdown */
-process.on('SIGINT', async () => {
-  try {
-    console.log('\nShutting down server...');
-    await pool.end();
-    console.log('Database pool closed.');
-    process.exit(0);
-  } catch (err) {
-    console.error('Error closing the database pool:', err);
-    process.exit(1);
-  }
-});
-
-/***************************************
- * Remaining routes and API endpoints *
- ***************************************/
-
 /* Movie Page */
 app.get('/movie/:id', async (req, res) => {
   let page = 1;
@@ -352,4 +330,22 @@ app.get('/movie/:id', async (req, res) => {
   console.log(movieInfo);
 
   res.render('movie', { movieInfo });
+});
+
+/* Start Server */
+app.listen(3000, () => {
+  console.log("Express server running");
+});
+
+/* Graceful Shutdown */
+process.on('SIGINT', async () => {
+  try {
+    console.log('\nShutting down server...');
+    await pool.end();
+    console.log('Database pool closed.');
+    process.exit(0);
+  } catch (err) {
+    console.error('Error closing the database pool:', err);
+    process.exit(1);
+  }
 });
