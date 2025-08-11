@@ -154,6 +154,14 @@ app.get('/list/:listId', isAuthenticated, async (req, res) => {
   res.render('list', { movies, listId });
 });
 
+app.get('/listView', isAuthenticated, async (req, res) => {
+    const [userLists] = await pool.query('SELECT * FROM custom_lists WHERE user_name = ?', [req.session.username]);
+    if (userLists.length === 0) {
+        return res.render('listView', { userLists: [], error: "You have no lists." });
+    }
+    res.render('listView', { userLists, error: undefined });
+});
+
 /* Delete List */
 app.post('/api/lists/delete/:id', isAuthenticated, async (req, res) => {
   try {
