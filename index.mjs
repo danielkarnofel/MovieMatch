@@ -304,11 +304,18 @@ app.get('/mood/:moodId', async (req, res) => {
     page++;
   }
 
-  res.render('mood', { genre, moodDict });
+  if (req.session.username == undefined) {
+    res.render('mood', { genre, moodDict });
+  } else {
+    const sql = 'SELECT list_id, list_name FROM custom_lists WHERE user_name = ?';
+    const lists = await pool.query(sql, [req.session.username]);
+
+    res.render('mood', { genre, moodDict, lists });
+  }
 });
 
 /* Movie Page */
-app.get('/movie/:id', async (req, res) => {
+app.get('/movie/:movieId', async (req, res) => {
   let page = 1;
   let found = false;
   const movieId = parseInt(req.params.movieId);
@@ -319,15 +326,14 @@ app.get('/movie/:id', async (req, res) => {
     const responseMovie = await fetch(urlMovie);
     const dataMovie = await responseMovie.json();
 
-    for (let i = 0; i < dataWeekTrending.results.length && moodDict.length < 12; i++) {
-      if (dataMovie.results[i].id == movieId) {
+    for (let i = 0; i < dataMovie.results.length; i++) {
+      if (parseInt(dataMovie.results[i].id) == movieId) {
         movieInfo = dataMovie.results[i];
+        found = true;
       }
     }
     page++;
   }
-
-  console.log(movieInfo);
 
   res.render('movie', { movieInfo });
 });

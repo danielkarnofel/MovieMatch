@@ -5,9 +5,9 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-  <h1><%= movieTitle %></h1>
+  <h1><%= movieInfo.title %></h1>
   <img src="https://image.tmdb.org/t/p/w500<%= movieInfo.poster_path %>" alt="<%= movieInfo.title %>">
-  <p><%= description %></p>
+  <p><%= movieInfo.overview %></p>
 
   <h2>Add a Review</h2>
   <form action="/api/movie/reviews/<%= movieInfo.title%>" method="POST">
