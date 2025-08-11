@@ -292,7 +292,7 @@ app.get('/mood/:moodId', async (req, res) => {
   }
 
   while (moodDict.length < 12) {
-    const urlWeekTrending = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&&api_key=${apiKey}`;
+    const urlWeekTrending = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&api_key=${apiKey}`;
     const responseWeekTrending = await fetch(urlWeekTrending);
     const dataWeekTrending = await responseWeekTrending.json();
 
@@ -322,7 +322,7 @@ app.get('/movie/:movieId', async (req, res) => {
   let movieInfo = {};
 
   while (!found) {
-    const urlMovie= `https://api.themoviedb.org/3/trending/movie/week?page=${page}&&api_key=${apiKey}`;
+    const urlMovie= `https://api.themoviedb.org/3/trending/movie/week?page=${page}&api_key=${apiKey}`;
     const responseMovie = await fetch(urlMovie);
     const dataMovie = await responseMovie.json();
 
@@ -333,6 +333,30 @@ app.get('/movie/:movieId', async (req, res) => {
       }
     }
     page++;
+  }
+
+  res.render('movie', { movieInfo });
+});
+
+app.get('/movie', async (req, res) => {
+  const title = req.query.title;
+  const poster = req.query.poster;
+  let movieInfo = {};
+  let found = false;
+
+  const urlMovie= `https://api.themoviedb.org/3/search/movie?query=${title}&api_key=${apiKey}`;
+  const responseMovie = await fetch(urlMovie);
+  const dataMovie = await responseMovie.json();
+
+  for (let i = 0; i < dataMovie.results.length && !found; i++) {
+    let posterUrl = dataMovie.results[i].poster_path
+      ? `https://image.tmdb.org/t/p/w500${dataMovie.results[i].poster_path}`
+      : '/img/default.jpg';
+
+    if (dataMovie.results[i].title == title && poster == posterUrl) {
+      movieInfo = dataMovie.results[i];
+      found = true;
+    }
   }
 
   res.render('movie', { movieInfo });
