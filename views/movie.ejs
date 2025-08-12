@@ -6,29 +6,32 @@
 
 <main>
   <section>
-    <h1><%= movieInfo.title %></h1>
-    <img src="https://image.tmdb.org/t/p/w500<%= movieInfo.poster_path %>" alt="<%= movieInfo.title %>">
-    <p><%= movieInfo.overview %></p>
+    <h1><%= dataMovie.title %></h1>
+    <img src="https://image.tmdb.org/t/p/w500<%= dataMovie.poster_path %>" alt="<%= dataMovie.title %>">
+    <p><%= dataMovie.overview %></p>
   </section>
   
+  <% if (loggedIn) { %>
   <section class="review-input-container">
     <h2>Add a Review</h2>
-    <form action="/api/movie/reviews/<%= movieInfo.title %>" method="POST">
+    <form action="/api/reviews/add/<%= dataMovie.id %>" method="POST">
       <textarea rows="5" cols="1" name="comment" placeholder="Write your review here..." required></textarea>
       <input type="number" name="rating" min="1" max="5" required>
       <button class="btn" type="submit">Post review</button>
     </form>
   </section>
+  <% } %>
 
   <section class="review-list-container">
-    <span class="review-list-header"><h2>Reviews</h2><span><%= "* * * * *" %> <%= "4.9" %></span></span>
-    <% // for (review of reviews) { %>
+    <span class="review-list-header"><h2>Reviews - <span><%= dataMovie.vote_average %></span></h2>
+    <% for (review of reviews) { %>
       <div class="review-item">
-        <p>5 Stars</p>
-        <p>This is a review... blah blah blah blah blah blah blah</p>
-        <p>- Username</p>
+        <p><%= review.rating %></p>
+        <p><%= review.content %></p>
+        <% const author = users.find(user => user.id === review.user_id); %>
+        <p>- <%= author.username %></p>
       </div>
-    <% // } %>
+    <% } %>
   </section>
 </main>
 

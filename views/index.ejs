@@ -5,85 +5,102 @@
 <%- include('partials/header.ejs') %>
 
 <main>
+	<section class="hero">
+	<% if (loggedIn) { %>
+		<h1>Welcome Back!</h1>
+		<p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just
+		need a feel-good escape.</p>
+		<p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood
+		away.</p>
+	<% } else { %>
+		<h1>Get Started</h1>
+		<p>Movie Matchmaker is a fun and personalized way to discover films based on your mood.</p>
+		<p>Whether you're feeling emotional, adventurous, or want something feel-good, our app helps
+		you find the perfect movie.</p>
+		<p>Explore genres, save your favorites, and get inspired by a daily motivational quote.</p>
+		<a class="btn" href="/signUp">Start Matching</a>
+	<% } %>
+	</section>
 
-  <section class="hero">
-    <h1>Welcome to MovieMatch</h1>
-    <p>Discover movies that match your mood — whether you're feeling adventurous, emotional, or just need a feel-good escape.</p>
-    <p>Explore, rate, and save films that vibe with you. Your next favorite movie is just a mood away.</p>
-  </section>
+	<section>
+		<% const topPick = popularData.results[0]; %>
+		<h1>Your Top Pick</h1>
+		<div class="highlight">
+			<a href="/movie/<%= topPick.id %>"><img src="http://image.tmdb.org/t/p/w154<%= topPick.poster_path %>" alt="<%= topPick.title %>"></a>
+			<div class="highlight-text">
+				<h3><%= topPick.title %></h3>
+				<p><%= topPick.overview %></p>
+			</div>
+		</div>
+	</section>
 
-  <section>
-    <% const topPick = popularMovies.results[0]; %>
-    <h1>Your Top Pick</h1>
-    <div href="/movie" class="highlight">
-      <a href="/movie?title=<%= topPick.title %>&poster=<%= topPick.poster_path %>">
-        <img src="http://image.tmdb.org/t/p/w154<%= topPick.poster_path %>" alt="<%= topPick.title %>">
-      </a>
-      <div class="highlight-text">
-        <h3><%= topPick.title %></h3>
-        <p><%= topPick.overview %></p>
-      </div>
-    </div>
-  </section>
+	<section>
+		<h1>Explore Moods</h1>
+		<div class="mood-container">
+			<% for (mood of genresData.genres) { %>
+			<a href="/mood/<%= mood.id %>/<%= mood.name %>"><%= mood.name %></a>
+			<% } %>
+		</div>
+	</section>
 
-  <section>
-    <h1>Recommended Moods</h1>
-    <div class="mood-container">
-      <% moods.forEach(mood => { %>
-        <a href="/mood/<%= mood.id %>"><%= mood.name %></a>
-      <% }) %>
-    </div>
-  </section>
+	<section>
+		<h1>Trending Movies</h1>
+		<div class="gallery">
+			<% for (let i=0; i < trendingData.results.length; i++) { %>
+				<% const movie = trendingData.results[i]; %>
+				<div class="gallery-item">
+					<a href="/movie/<%= movie.id %>"><img src="http://image.tmdb.org/t/p/w154<%= movie.poster_path %>"alt="<%= movie.title %>"></a>
+				</div>
+			<% } %>
+		</div>
+	</section>
 
-  <section>
-    <h1>Quote of the Day</h1>
-    <div class="quote">
-      <p>“<%= quoteOfTheDay.content %>”<br><em>― <%= quoteOfTheDay.author %></em></p>
-    </div>
-  </section>
+	<section>
+		<h1>Quote of the Day</h1>
+		<div class="quote">
+			<p>“<%= quoteData[0].content %>”<br><em>― <%= quoteData[0].author %></em></p>
+		</div>
+	</section>
 
-  <section>
-    <h1>Trending Movies</h1>
-    <div class="gallery">
-      <% for (let i = 0; i < 7; i++) { %>
-        <% const movie = trendingMovies.results[i]; %>
-        <% if (movie && movie.poster_path) { %>
-          <div class="gallery-item">
-            <a href="/movie/<%= movie.id %>">
-              <img src="http://image.tmdb.org/t/p/w154<%= movie.poster_path %>" alt="<%= movie.title %>">
-            </a>
-          </div>
-        <% } %>
-      <% } %>
-    </div>
-  </section>
-
-  <% 
-    const lists = {};
-    userListsWithMovies.forEach(row => {
-      if (!lists[row.list_name]) lists[row.list_name] = [];
-      if (row.poster_url) lists[row.list_name].push(row);
-    });
-  %>
-
-  <% Object.keys(lists).forEach(listName => { %>
-    <section>
-      <a href="/list"><h2><%= listName %></h2></a>
-      <div class="gallery">
-        <% lists[listName].forEach(movie => { %>
-          <div class="gallery-item">
-            <a href="/movie?title=<%= encodeURIComponent(movie.movie_title) %>&poster=<%= movie.poster_url %>">
-                <img src="<%= movie.poster_url %>" alt="<%= movie.movie_title %>">
-            </a>
-
-          </div>
+	<section>
+		<%
+		const max = 20;
+		const count = 7;
+		const usedIndices = new Set();
+		while (usedIndices.size < count) {
+			const randIndex = Math.floor(Math.random() * max);
+			usedIndices.add(randIndex);
+		}
+		const randomIndices = Array.from(usedIndices);
+		%>
+        <h1>Random Picks</h1>
+        <div class="gallery">
+        <% randomIndices.forEach(index => { %>
+			<div class="gallery-item">
+				<a href="/movie/<%= popularData.results[index].id %>">
+					<img src="http://image.tmdb.org/t/p/w154<%= popularData.results[index].poster_path %>">
+				</a>
+			</div>
         <% }) %>
-      </div>
+        </div>
     </section>
-  <% }) %>
+
+	<% if (loggedIn) { %>
+		<% for (const list of userLists) { %>
+		<section>
+			<a href="/list/<%= list.id %>"><h2><%= list.name %></h2></a>
+			<div class="gallery">
+			<% for (const movie of list.movies) { %>
+				<div class="gallery-item">
+					<a href="/movie/<%= movie.id %>"><img src="http://image.tmdb.org/t/p/w154<%= movie.poster %>" alt="<%= movie.title %>"></a>
+				</div>
+			<% } %>
+			</div>
+		</section>
+		<% } %>
+	<% } %>
 
 </main>
-
 <%- include('partials/footer.ejs') %>
 </body>
 </html>

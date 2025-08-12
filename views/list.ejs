@@ -5,26 +5,33 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-  <h1>Movie List</h1>
-  <a href="/search">Add movie</a><br>
+	<h1><%= list.name %></h1>
+	<h2><%= list.description %></h2>
+	<a class="btn" href="/search">Add movie</a><br>
 
-  <% if (movies.length === 0) { %>
-    <p>This list is empty.</p>
-  <% } else { %>
-    <div class="gallery">
-      <% movies.forEach(movie => { %>
-        <a href="/movie?title=<%= encodeURIComponent(movie.movie_title) %>&poster=<%= movie.poster_url %>">
-            <p><%= movie.description || '' %></p>
-          <img src="<%= movie.poster_url %>" alt="<%= movie.movie_title %>">
-        </a>
-        <form action="/api/lists/movie/delete" method="POST" style="display:inline;">
-          <input type="hidden" name="listId" value="<%= listId %>">
-          <input type="hidden" name="movieTitle" value="<%= movie.movie_title %>">
-          <button type="submit" onclick="return confirm('Delete this movie?')">Delete</button>
-        </form>
-      <% }) %>
-    </div>
-  <% } %>
+	<% console.log(list); %>
+
+	<% if (list.movies.length == 0) { %>
+		<p>No movies added yet!</p>
+	<% } else { %>
+		<div class="gallery">
+		<% for (const movie of list.movies) { %>
+			<div class="highlight">
+				<a href="/movie/<%= movie.id %>"><img src="http://image.tmdb.org/t/p/w154<%= movie.poster %>" alt="<%= movie.title %>"></a>
+				<div class="highlight-text">
+					<h3><%= movie.title %></h3>
+					<p><%= movie.overview %></p>
+				</div>
+			</div>
+			<form action="/api/list/remove/<%= movie.id %>" method="POST" style="display:inline;">
+				<input type="hidden" name="listId" value="<%= list.id %>">
+				<input type="hidden" name="movieTitle" value="<%= movie.title %>">
+				<button class="btn" type="submit" onclick="return confirm('Delete this movie?')">Delete</button>
+			</form>
+		<% } %>
+		</div>
+
+	<% } %>
 </main>
 
 <%- include('partials/footer.ejs') %>
