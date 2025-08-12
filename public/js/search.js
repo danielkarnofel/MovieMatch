@@ -29,25 +29,29 @@ async function searchMovie(e) {
 		}
 		resultsList.innerHTML = '';
 		for (const movie of data.results) {
-			const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : '/img/default.jpg';
-			resultsList.innerHTML += `
-				<a href="/movie/${movie.id}" class="search-result-item">
+			const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : `/img/default.jpg`;
+			let result = '';
+			result += `<div class="search-result">`;
+			result += `
+				<a class="search-result-item" href="/movie/${movie.id}">
 					<img src="${poster}" alt="${movie.title}">
 					<h5>${movie.title}</h5>
 					<p>${movie.overview || 'No description available.'}</p>
-				</div>
+				</a>
 			`;
 			if (loggedIn) {
-				resultsList.innerHTML += `
-					<div class="search-result-input">
-						<form action="/api/list/add/${movie.id}" method="POST">
-							<input type="hidden" name="movieTitle" value="${movie.title}">
-							<select name="listId" required>${listOptions.join('')}</select>
-							<button class="btn" type="submit">Add to List</button>
-						</form>
-					</div>
-				`;
+			result += `
+				<div class="search-result-input">
+					<form action="/api/list/add/${movie.id}" method="POST">
+						<input type="hidden" name="movieTitle" value="${movie.title}">
+						<select name="listId" required>${listOptions.join('')}</select>
+						<button class="btn" type="submit">Add to List</button>
+					</form>
+				</div>
+			`;
 			}
+			result += `</div>`;
+			resultsList.innerHTML += result;
 		}
 
     resultsList.style.display = "flex";

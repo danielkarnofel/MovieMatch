@@ -24,14 +24,14 @@
 
 	<section>
 		<% const topPick = popularData.results[0]; %>
-		<h1>Your Top Pick</h1>
-		<div class="highlight">
-			<a href="/movie/<%= topPick.id %>"><img src="http://image.tmdb.org/t/p/w154<%= topPick.poster_path %>" alt="<%= topPick.title %>"></a>
-			<div class="highlight-text">
-				<h3><%= topPick.title %></h3>
+		<h1>Top Pick</h1>
+		<a href="/movie/<%= topPick.id %>" class="highlight">
+			<img src="http://image.tmdb.org/t/p/w500<%= topPick.poster_path %>" alt="<%= topPick.title %>">
+			<div class="highlight-info">
+				<h2><%= topPick.title %></h2>
 				<p><%= topPick.overview %></p>
 			</div>
-		</div>
+		</a>
 	</section>
 
 	<section>

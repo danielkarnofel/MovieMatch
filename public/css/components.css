@@ -1,192 +1,51 @@
 
-/********************************************************************************/
-/* Header Logo */
-/********************************************************************************/
-
-.logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-}
-
-.logo h1 {
-    font-size: 2rem;
-}
-
-.logo img {
-    height: 2rem;
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Login Card */
-/********************************************************************************/
-
-.signup-login-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 20vh 0 0 0;
-}
-
-.signup-login-container img {
-    width: 50%;
-    max-width: 25vh;
-}
-
-.signup-login-container h1 {
-    font-size: 3rem;
-}
-
-.signup-login-container form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Nav Link */
-/********************************************************************************/
-
-.nav-link {
-    display: flex;
-    align-items: center;
-    height: 100%;
-    padding: 1rem;
-    background-color: var(--color-d);
-}
-
-.nav-link:hover {
-    background-color: var(--color-md);
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Dropdown */
-/********************************************************************************/
-
-.dropdown-toggle {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    width: 8rem;
-}
-
-.dropdown-content {
-    position: absolute;
-    display: none;
-    flex-direction: column;
-    width: 8rem;
-    border: 1px solid white;
-}
-
-.dropdown:hover .dropdown-content {
-    display: flex;
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Buttons and Links */
-/********************************************************************************/
-
-a.link {
-    color: white;
-    text-decoration: none;
-}
-
-a.link:hover {
-    color: var(--color-ad);
-}
-
-.btn {
-    color: white;
-    background-color: var(--color-ad);
-    width: fit-content;
-    border-radius: 1rem;
-    padding: 1rem;
-    font-weight: bold;
-}
-
-.btn:hover {
-    background-color: var(--color-a);
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
 /* Hero */
 /********************************************************************************/
-
 .hero {
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    max-width: 80rem;
 }
 
 .hero a {
     width: fit-content;
 }
 
-/********************************************************************************/
-
-/********************************************************************************/
 /* Highlight Card */
 /********************************************************************************/
 
 .highlight {
     display: flex;
-    justify-content: left;
+    flex-direction: column;
     gap: 1rem;
-    padding: 1rem 0 0;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 2rem;
+    margin-top: 1rem;
+}
+
+.highlight:hover {
+    border-color: var(--color-a);
 }
 
 .highlight img {
-    height: 250px;
-    transition: transform 0.3s, box-shadow 0.3s;
-    cursor: pointer;
+    border-radius: 0.25rem;
 }
 
-.highlight img:hover {
-    z-index: 1;
-    transform: scale(1.1);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
-}
-
-.highlight-text {
+.highlight-info {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: hidden;
+}
+
+.highlight-info p {
+    font-size: 1rem;
 }
 
 /********************************************************************************/
 
-/********************************************************************************/
-/* Quote Card */
-/********************************************************************************/
-
-.quote {
-    padding: 1rem 0 0;
-}
-
-.quote p {
-    display: flex;
-    flex-direction: column;
-    font-size: 1.5rem;
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* List Gallery */
+/* Gallery */
 /********************************************************************************/
 
 .gallery {
@@ -213,9 +72,6 @@ a.link:hover {
     height: 250px;
 }
 
-/********************************************************************************/
-
-/********************************************************************************/
 /* Mood List */
 /********************************************************************************/
 
@@ -239,9 +95,19 @@ a.link:hover {
     background-color: var(--color-a);
 }
 
+/* Quote */
 /********************************************************************************/
 
-/********************************************************************************/
+.quote {
+    padding: 1rem 0 0;
+}
+
+.quote p {
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+}
+
 /* Search */
 /********************************************************************************/
 
@@ -249,51 +115,56 @@ a.link:hover {
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    padding: 1rem;
+    padding: 1rem 0;
 }
 
 .search-result-list {
     display: none;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+}
+
+.search-result {
+    display: flex;
     flex-direction: column;
     gap: 1rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 25vh;
+    height: 50vh;
+}
+
+.search-result:hover {
+    border-color: var(--color-a);
 }
 
 .search-result-item {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1rem;
-    margin: 0 0 1rem 0;
-    background-color: var(--color-md);
-    border-radius: 0.5rem;
-}
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Section Title */
-/********************************************************************************/
-
-.section-title {
-    display: flex;
-    align-items: center;
     gap: 0.5rem;
-    padding: 1rem 0;
+    overflow: hidden;
+    height: 100%;
 }
 
-.section-title h2 {
-    font-size: 1.5rem;
-    padding: 0 1rem 0 0;
+.search-result-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.25rem;
 }
 
-.section-title h3 {
-    font-size: 1.25rem;
-    padding: 0 1rem 0 0;
+.search-result-item p {
+    max-height: 6rem;
+
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
 }
 
-/********************************************************************************/
-
-/********************************************************************************/
 /* Review Input */
 /********************************************************************************/
 
@@ -341,31 +212,3 @@ a.link:hover {
     border-radius: 0.5rem;
     padding: 1rem;
 }
-
-/********************************************************************************/
-
-/********************************************************************************/
-/* Review Input */
-/********************************************************************************/
-
-.lists-container {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/********************************************************************************/
-
-
-
-
-
-
-
-/********************************************************************************/
-/* Component Name */
-/********************************************************************************/
-
-
-
-/********************************************************************************/

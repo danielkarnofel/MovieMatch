@@ -1,5 +1,58 @@
 
-main {
-    width: 80%;
-    margin: auto;
+.highlight {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-top: 1rem;
+}
+
+.highlight:hover {
+    border-color: var(--color-a);
+}
+
+.highlight img {
+    border-radius: 0.25rem;
+}
+
+.highlight-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+@media (width > 800px) {
+    .highlight {
+        flex-direction: row;
+        gap: 2rem;
+        align-items: flex-start; /* Don't stretch items vertically */
+    }
+
+    .highlight img {
+        width: 50%;
+        height: auto; /* Keep aspect ratio */
+        display: block;
+    }
+
+    .highlight-info {
+        width: 50%;
+        overflow: hidden;
+    }
+
+    /* Sync height with the image */
+    .highlight-info {
+        max-height: fit-content; /* prevent flex from pushing it taller */
+    }
+
+    /* Optional: truncate text gracefully */
+    .highlight-info p {
+        font-size: 1.25rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        /* -webkit-line-clamp: 10; adjust for your design */
+        -webkit-box-orient: vertical;
+    }
 }
