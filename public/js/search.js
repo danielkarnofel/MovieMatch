@@ -31,9 +31,9 @@ async function searchMovie(e) {
 		for (const movie of data.results) {
 			const poster = movie.poster_path ? `https://image.tmdb.org/t/p/w500${movie.poster_path}` : `/img/default.jpg`;
 			let result = '';
-			result += `<div class="search-result">`;
+			result += `<div class="list-item">`;
 			result += `
-				<a class="search-result-item" href="/movie/${movie.id}">
+				<a href="/movie/${movie.id}">
 					<img src="${poster}" alt="${movie.title}">
 					<h5>${movie.title}</h5>
 					<p>${movie.overview || 'No description available.'}</p>
@@ -41,7 +41,7 @@ async function searchMovie(e) {
 			`;
 			if (loggedIn) {
 			result += `
-				<div class="search-result-input">
+				<div>
 					<form action="/api/list/add/${movie.id}" method="POST">
 						<input type="hidden" name="movieTitle" value="${movie.title}">
 						<select name="listId" required>${listOptions.join('')}</select>

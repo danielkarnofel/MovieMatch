@@ -5,17 +5,21 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-	<h1>
-		<%= genreName %>
-	</h1>
+	<section>
+	<h1><%= genreName %></h1>
+	</section>
 
+	<section class="list-items">
 	<% for (const movie of dataGenre.results) { %>
+		<div class="list-item">
 		<a href="/movie/<%= movie.id %>" class="search-result-item">
 			<img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="${movie.title}">
 			<h5><%= movie.title %></h5>
 			<p><%= movie.overview %></p>
+		</a>
 		</div>
 	<% } %>
+	</section>
 </main>
 
 <%- include('partials/footer.ejs') %>
