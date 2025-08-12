@@ -30,6 +30,12 @@ input {
     border-radius: 0.5rem;
 }
 
+select {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    width: fit-content;
+}
+
 input::placeholder {
     color: var(--color-ml);
 }

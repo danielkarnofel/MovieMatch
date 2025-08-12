@@ -4,43 +4,19 @@
 <body>
 <%- include('partials/header.ejs') %>
 
-<h1>Mood: <%= genre %></h1>
+<main>
+	<h1>
+		<%= genreName %>
+	</h1>
 
-<h2>Recommendations</h2>
-<!--Recommendations-->
-<div class="container my-4">
-  <% for (let i = 0; i < moodDict.length; i++) { %>
-    <div class="row mb-4 align-items-start">
-      <% const poster = moodDict[i].poster_path ? `https://image.tmdb.org/t/p/w500${moodDict[i].poster_path}` : '/img/default.jpg'; %>
-
-      <div class="col-md-4 col-sm-12 mb-3 mb-md-0">
-        <img src="<%= poster %>" alt="<%= moodDict[i].title %>" class="img-fluid rounded shadow-sm">
-      </div>
-
-      <div class="col-md-6 col-sm-12">
-        <h5><%= moodDict[i].title %></h5>
-        <p><%= moodDict[i].overview || 'No description available.' %></p>
-      </div>
-      <div>
-      </div class="col-md-2 col-sm-12">
-        <% if (isAuthenticated) { %>
-            <form method="POST" action="/api/movie/list">
-              <select name="listId" id="">
-                <% for (let i = 0; i < lists[0].length; i++) { %>
-                  <option value="<%= lists[0][i].list_id %>"><%= lists[0][i].list_name %></option>
-                <% } %>
-              </select>
-              <input type="hidden" name="movieTitle" value="<%= moodDict[i].title %>">
-              <input type="hidden" name="posterUrl" value="<%= poster %>">
-              <input type="hidden" name="description" value="<%= moodDict[i].overview %>">
-              <button>Add to List</button>
-            </form>
-        <% } else {%>
-          <a class="link" href="/login">Sign in to create a watch list</a>
-        <% } %>
-    </div>
-  <% } %>
-</div>
+	<% for (const movie of dataGenre.results) { %>
+		<a href="/movie/<%= movie.id %>" class="search-result-item">
+			<img src="https://image.tmdb.org/t/p/w500<%= movie.poster_path %>" alt="${movie.title}">
+			<h5><%= movie.title %></h5>
+			<p><%= movie.overview %></p>
+		</div>
+	<% } %>
+</main>
 
 <%- include('partials/footer.ejs') %>
 </body>

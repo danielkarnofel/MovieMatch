@@ -5,43 +5,40 @@
 <%- include("partials/header.ejs") %>
 
 <main>
-  <% if (typeof flash !== 'undefined') { %>
-    <div class="alert alert-success"><%= flash %></div>
-  <% } %>
+	<% if (typeof flash !== 'undefined') { %>
+		<div><%= flash %></div>
+	<% } %>
 
-  <section>
-  <h1>Hi <%= username %>!</h1>
-  <p><strong>Email:</strong> <%= email %></p>
-  </section>
+	<section>
+		<h1>Hi <%= username %>!</h1>
+	</section>
 
-  <!-- <section class="lists-container">
-  <h2>My Lists</h2>
+	<section class="lists-container">
 
-  <form action="/api/lists" method="POST">
-    <input type="text" name="list_name" placeholder="New list name" required>
-    <textarea name="description" placeholder="Description (optional)"></textarea>
-    <button type="submit">Create List</button>
-  </form>
+		<h2>My Lists</h2>
 
-  <% if (!userLists || userLists.length === 0) { %>
-    <p>No lists yet.</p>
-  <% } else { %>
-    <% userLists.forEach(list => { %>
-      <div class="list">
-        <h3><%= list.list_name %></h3>
-        <p><%= list.description %></p>
-        <a href="/list/<%= list.list_id %>">View List</a>
-        <form action="/api/lists/delete/<%= list.list_id %>" method="POST" style="display:inline;">
-          <button type="submit" onclick="return confirm('Delete this list?')">Delete</button>
-        </form>
-        <form action="/list/<%= list.list_id %>" style="display:inline;">
-          <button type="submit">Movies</button>
-        </form>
-      </div>
-    <% }) %>
-  <% } %>
+		<form action="/api/lists/create" method="POST">
+			<input type="text" name="name" placeholder="List Name" required>
+			<textarea name="description" placeholder="Description (optional)"></textarea>
+			<button class="btn" type="submit">Create List</button>
+		</form>
 
-  </section> -->
+		<% if (!userLists || userLists.length === 0) { %>
+			<p>No lists yet.</p>
+		<% } else { %>
+			<% userLists.forEach(list => { %>
+				<div class="list">
+					<h3><%= list.name %></h3>
+					<p><%= list.description %></p>
+					<a class="btn" href="/list/<%= list.id %>">Edit</a>
+					<form action="/api/lists/delete/<%= list.id %>" method="POST" style="display:inline;">
+						<button class="btn" type="submit" onclick="return confirm('Delete this list?')">Delete</button>
+					</form>
+				</div>
+			<% }) %>
+		<% } %>
+
+	</section>
 
 </main>
 

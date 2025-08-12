@@ -1,0 +1,427 @@
+import express from 'express';
+import mysql from 'mysql2/promise';
+import session from 'express-session';
+import bcrypt from 'bcryptjs';
+import path from 'path';
+
+const app = express();
+const apiKey = `715c996185f334cb145e6bc6b7859540`;
+
+app.set('view engine', 'ejs');
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+
+/* Session setup */
+/****************************************************************************************************/
+app.use(session({
+	secret: 'moviematch123',
+	resave: false,
+	saveUninitialized: false
+}));
+
+app.use((req, res, next) => {
+	res.locals.isAuthenticated = req.session.userId;
+	res.locals.username = req.session.username;
+	next();
+});
+
+function isAuthenticated(req, res, next) {
+	if (!req.session.authenticated) {
+		res.redirect('/login');
+	} else {
+		next();
+	}
+}
+
+/* Database connection */
+/****************************************************************************************************/
+const pool = mysql.createPool({
+	host: "danielkarnofel.tech",
+	user: "danielk1_webuser",
+	password: "CSUMB-cst336",
+	database: "danielk1_moviematch",
+	connectionLimit: 10,
+	waitForConnections: true
+});
+const conn = await pool.getConnection();
+
+/* Home Page */
+/****************************************************************************************************/
+app.get('/', async (req, res) => {
+
+	const urlTrendingMovies = `https://api.themoviedb.org/3/trending/movie/day?page=1&&api_key=${apiKey}`;
+	const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+	const urlPopularMovies = `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`;
+
+	const responseTrendingMovies = await fetch(urlTrendingMovies);
+	const responseGenre = await fetch(urlGenre);
+	const responsePopularMovies = await fetch(urlPopularMovies);
+
+	const dataTrendingMovies = await responseTrendingMovies.json();
+	const dataGenre = await responseGenre.json();
+	const dataPopularMovies = await responsePopularMovies.json();
+
+	const shuffled = dataGenre.genres.sort(() => 0.5 - Math.random());
+	const moods = shuffled.slice(0, 4);
+
+	
+
+	// Logged out home page:
+	if (!req.session.authenticated) {
+
+		const max = 20;
+		const count = 7;
+		const usedIndices = new Set();
+		while (usedIndices.size < count) {
+			const randIndex = Math.floor(Math.random() * max);
+			usedIndices.add(randIndex);
+		}
+		const randomIndices = Array.from(usedIndices);
+
+		res.render('indexlo', {
+			trendingMovies: dataTrendingMovies,
+			popularMovies: dataPopularMovies,
+			moods, randomIndices
+		});
+	} 
+	
+	// Logged in home page:
+	else {
+
+		
+
+		const [userListsWithMovies] = await pool.query(`
+				SELECT cl.list_id, cl.list_name, lm.movie_title, lm.poster_url
+				FROM custom_lists cl
+				LEFT JOIN list_movies lm ON cl.list_id = lm.list_id
+				WHERE cl.user_name = ?
+    		`, [req.session.username]);
+
+		const quoteAPI = `http://api.quotable.io/quotes/random`;
+		const response = await fetch(quoteAPI);
+		const data = await response.json();
+
+		if (data.length === 0) {
+			return res.status(404).json({ error: "No quotes found." });
+		}
+
+		const quote = { content: data[0].content, author: data[0].author };
+
+		res.render('index', {
+			trendingMovies: dataTrendingMovies,
+			popularMovies: dataPopularMovies,
+			moods, userListsWithMovies,
+			quoteOfTheDay: quote
+		});
+	}
+});
+
+/* Profile */
+/****************************************************************************************************/
+app.get('/profile', isAuthenticated, async (req, res) => {
+
+	const [userInfo] = await pool.query('SELECT username, email FROM users WHERE id = ?', [req.session.userId]);
+	const [userLists] = await pool.query('SELECT * FROM custom_lists WHERE user_name = ?', [req.session.username]);
+
+	if (userInfo.length === 0) return res.redirect('/logout');
+
+	const flash = req.session.flash;
+	delete req.session.flash;
+
+	res.render('profile', {
+		username: userInfo[0].username,
+		email: userInfo[0].email,
+		userLists,
+		flash
+	});
+});
+
+/* Search */
+/****************************************************************************************************/
+app.get('/search', isAuthenticated, async (req, res) => {
+
+	const [userLists] = await pool.query('SELECT list_id, list_name FROM custom_lists WHERE user_name = ?', [req.session.username]);
+	const flash = req.session.flash;
+	delete req.session.flash;
+	res.render('search', { userLists, flash });
+});
+
+/* My Lists */
+/****************************************************************************************************/
+app.get('/listView', isAuthenticated, async (req, res) => {
+	const [userLists] = await pool.query('SELECT * FROM custom_lists WHERE user_name = ?', [req.session.username]);
+	if (userLists.length === 0) {
+		return res.render('listView', { userLists: [], error: "You have no lists." });
+	}
+	res.render('listView', { userLists, error: undefined });
+});
+
+/* List
+/****************************************************************************************************/
+app.get('/list/:listId', isAuthenticated, async (req, res) => {
+	const listId = req.params.listId;
+	const sql = 'SELECT * FROM list_movies WHERE list_id = ?';
+	const [movies] = await pool.query(sql, [listId]);
+
+	res.render('list', { movies, listId });
+});
+
+/* Mood */
+/****************************************************************************************************/
+
+app.get('/mood/:moodId', async (req, res) => {
+	const urlGenre = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}`;
+	const responseGenre = await fetch(urlGenre);
+	const dataGenre = await responseGenre.json();
+
+	const urlGenre1 = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&sort_by=popularity.desc&with_genres=28`;
+    const responseGenre1 = await fetch(urlGenre1);
+    const dataGenre1 = await responseGenre1.json();
+    console.log(dataGenre1);
+
+	let page = 1;
+	const moodId = parseInt(req.params.moodId);
+	const moodDict = [];
+	let genre = ``;
+
+	for (let g = 0; g < dataGenre.genres.length; g++) {
+		if (parseInt(dataGenre.genres[g].id) == moodId) {
+			genre = dataGenre.genres[g].name;
+		}
+	}
+
+	while (moodDict.length < 12) {
+		const urlWeekTrending = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&api_key=${apiKey}`;
+		const responseWeekTrending = await fetch(urlWeekTrending);
+		const dataWeekTrending = await responseWeekTrending.json();
+
+		for (let i = 0; i < dataWeekTrending.results.length && moodDict.length < 12; i++) {
+			if (dataWeekTrending.results[i].genre_ids.includes(moodId)) {
+				moodDict.push(dataWeekTrending.results[i]);
+			}
+		}
+		page++;
+	}
+
+	if (req.session.username == undefined) {
+		res.render('mood', { genre, moodDict });
+	} else {
+		const sql = 'SELECT list_id, list_name FROM custom_lists WHERE user_name = ?';
+		const lists = await pool.query(sql, [req.session.username]);
+
+		res.render('mood', { genre, moodDict, lists });
+	}
+});
+
+/* Movie */
+/****************************************************************************************************/
+
+app.get('/movie/:movieId', async (req, res) => {
+	let page = 1;
+	let found = false;
+	const movieId = parseInt(req.params.movieId);
+	let movieInfo = {};
+
+	while (!found) {
+		const urlMovie = `https://api.themoviedb.org/3/trending/movie/week?page=${page}&api_key=${apiKey}`;
+		const responseMovie = await fetch(urlMovie);
+		const dataMovie = await responseMovie.json();
+
+		for (let i = 0; i < dataMovie.results.length; i++) {
+			if (parseInt(dataMovie.results[i].id) == movieId) {
+				movieInfo = dataMovie.results[i];
+				found = true;
+			}
+		}
+		page++;
+	}
+
+	res.render('movie', { movieInfo });
+});
+
+// Search for a movie by title
+app.get('/movie', async (req, res) => {
+	const title = req.query.title;
+	const poster = req.query.poster;
+	let movieInfo = {};
+	let found = false;
+
+	const urlMovie = `https://api.themoviedb.org/3/search/movie?query=${title}&api_key=${apiKey}`;
+	const responseMovie = await fetch(urlMovie);
+	const dataMovie = await responseMovie.json();
+
+	for (let i = 0; i < dataMovie.results.length && !found; i++) {
+		let posterUrl = dataMovie.results[i].poster_path
+			? `https://image.tmdb.org/t/p/w500${dataMovie.results[i].poster_path}`
+			: '/img/default.jpg';
+
+		if (dataMovie.results[i].title == title && poster == posterUrl) {
+			movieInfo = dataMovie.results[i];
+			found = true;
+		}
+	}
+
+	res.render('movie', { movieInfo });
+});
+
+/* Login/Signup */
+/****************************************************************************************************/
+
+app.get('/login', (req, res) => {
+	res.render('login', { isAuthenticated: req.session.userId, error: undefined });
+});
+
+app.post('/login', async (req, res) => {
+
+	const { username, password } = req.body;
+	const [rows] = await pool.query('SELECT * FROM users WHERE username = ?', [username]);
+
+	if (rows.length > 0) {
+		const user = rows[0];
+		const match = await bcrypt.compare(password, user.userPassword);
+		if (match) {
+			req.session.userId = user.id;
+			req.session.username = user.username;
+			req.session.authenticated = true;
+			return res.redirect('/');
+		}
+	}
+	res.render('login', { isAuthenticated: false, error: 'Invalid username or password' });
+});
+
+app.get('/signUp', (req, res) => {
+	res.render('signUp', { error: undefined });
+});
+
+app.post('/signup', async (req, res) => {
+
+	const { username, password, confirm } = req.body;
+	const email = `${username}@moviematch.fake`;
+
+	if (password !== confirm) {
+		return res.render('signUp', { error: 'Passwords do not match.' });
+	}
+
+	try {
+		const hash = await bcrypt.hash(password, 10);
+		await pool.query('INSERT INTO users (username, userPassword, email) VALUES (?, ?, ?)', [username, hash, email]);
+		res.redirect('/login');
+	} catch (err) {
+		console.error(err);
+		res.render('signUp', { error: 'Username or email already exists.' });
+	}
+});
+
+app.get('/logout', (req, res) => {
+	req.session.destroy(() => {
+		res.redirect('/');
+	});
+});
+
+/* API Routes */
+/****************************************************************************************************/
+
+app.get('/api/search/:query', isAuthenticated, async (req, res) => {
+	try {
+		const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(req.params.query)}&api_key=${apiKey}`;
+		const response = await fetch(url);
+		const data = await response.json();
+
+		if (!data.results || data.results.length === 0) {
+			return res.status(404).json({ error: "No results found." });
+		}
+
+		res.status(200).json(data);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: "Server error" });
+	}
+});
+
+/* Create List */
+app.post('/api/lists', isAuthenticated, async (req, res) => {
+	
+	try {
+		const { list_name, description } = req.body;
+		if (!list_name) return res.redirect('/profile');
+
+		await pool.query('INSERT INTO custom_lists (user_name, list_name, description) VALUES (?, ?, ?)', [
+			req.session.username, list_name, description
+		]);
+
+		req.session.flash = "List created!";
+		res.redirect('/profile');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Server error");
+	}
+});
+
+/* Delete List */
+app.post('/api/lists/delete/:id', isAuthenticated, async (req, res) => {
+	try {
+		await pool.query('DELETE FROM custom_lists WHERE list_id = ? AND user_name = ?', [
+			req.params.id,
+			req.session.username
+		]);
+		res.redirect('/profile');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Server error");
+	}
+});
+
+/* Add to List */
+app.post('/api/movie/list', isAuthenticated, async (req, res) => {
+	try {
+		const { listId, movieTitle, posterUrl, description } = req.body;
+
+		if (isNaN(listId) || !movieTitle || !posterUrl) {
+			req.session.flash = "Invalid movie data.";
+			return res.redirect('/search');
+		}
+
+		const sql = `INSERT INTO list_movies (list_id, movie_title, poster_url, description) VALUES (?, ?, ?, ?)`;
+		await conn.query(sql, [listId, movieTitle, posterUrl, description]);
+
+		req.session.flash = `"${movieTitle}" added to your list!`;
+		res.redirect('/search');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Server error");
+	}
+});
+
+/* Delete from List */
+app.post('/api/lists/movie/delete', isAuthenticated, async (req, res) => {
+	try {
+		const { listId, movieTitle } = req.body;
+
+		await pool.query('DELETE FROM list_movies WHERE list_id = ? AND movie_title = ?', [listId, movieTitle]);
+
+		res.redirect(`/list/${listId}`);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send("Server error");
+	}
+});
+
+/* Start Server */
+/****************************************************************************************************/
+app.listen(3000, () => {
+	console.log("Express server running");
+});
+
+/* Graceful Shutdown */
+/****************************************************************************************************/
+process.on('SIGINT', async () => {
+	try {
+		console.log('\nShutting down server...');
+		await pool.end();
+		console.log('Database pool closed.');
+		process.exit(0);
+	} catch (err) {
+		console.error('Error closing the database pool:', err);
+		process.exit(1);
+	}
+});
