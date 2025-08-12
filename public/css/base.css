@@ -38,6 +38,11 @@ select {
     width: fit-content;
 }
 
+textarea {
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+}
+
 input::placeholder {
     color: var(--color-ml);
 }
