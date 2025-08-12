@@ -14,7 +14,6 @@
 	</section>
 
 	<section class="lists-container">
-
 		<h2>My Lists</h2>
 
 		<form action="/api/lists/create" method="POST">
@@ -27,21 +26,33 @@
 			<p>No lists yet.</p>
 		<% } else { %>
 			<% userLists.forEach(list => { %>
-				<div class="list">
+				<div class="list" id="list-<%= list.id %>">
 					<h3><%= list.name %></h3>
 					<p><%= list.description %></p>
-					<a class="btn" href="/list/<%= list.id %>">Edit</a>
+					<form action="/list/<%= list.id %>" style="display:inline;">
+						<button class="btn" type="submit">Add Movie</button>
+					</form>
+
+					<button class="btn" onclick="toggleEditForm(<%= list.id %>)">Edit</button>
 					<form action="/api/lists/delete/<%= list.id %>" method="POST" style="display:inline;">
 						<button class="btn" type="submit" onclick="return confirm('Delete this list?')">Delete</button>
+					</form>
+
+					<form class="edit-form" id="edit-form-<%= list.id %>" action="/api/lists/update/<%= list.id %>" method="POST" style="display: none; margin-top: 10px;">
+						<input type="text" name="name" value="<%= list.name %>" required />
+						<textarea name="description"><%= list.description %></textarea>
+						<button class="btn" type="submit">Save</button>
+						<button class="btn" type="button" onclick="toggleEditForm(<%= list.id %>)">Cancel</button>
 					</form>
 				</div>
 			<% }) %>
 		<% } %>
-
 	</section>
-
 </main>
 
 <%- include("partials/footer.ejs") %>
+
+<script src="/js/profile.js"></script>
+
 </body>
 </html>

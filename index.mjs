@@ -248,6 +248,22 @@ app.post('/api/list/add/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+app.post('/api/lists/update/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, description } = req.body;
+
+  try {
+
+        const sql = `UPDATE lists SET name = ?, description = ? WHERE  id = ?`;
+        await conn.query(sql, [name, description, id]);
+
+        res.redirect('/profile');
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Server error");
+    }
+});
+
 app.post('/api/list/remove/:id', isAuthenticated, async (req, res) => {
     try {
         const { listId, movieTitle } = req.body;
