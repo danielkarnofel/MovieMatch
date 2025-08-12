@@ -122,7 +122,7 @@
     display: none;
     flex-wrap: wrap;
     gap: 2rem;
-    justify-content: center;
+    justify-content: left;
 }
 
 .search-result {
@@ -165,54 +165,6 @@
     mask-size: 100% 100%;
 }
 
-/* Review Input */
-/********************************************************************************/
-
-.review-input-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    gap: 0.5rem;
-}
-
-.review-input-container form {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-    gap: 0.5rem;
-}
-
-.review-input-container textarea {
-    padding: 1rem;
-}
-
-.review-input-container input[type="number"] {
-    width: fit-content;
-}
-
-.review-list-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    gap: 1rem;
-}
-
-.review-list-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-}
-
-.review-item {
-    display: flex;
-    flex-direction: column;
-    justify-content: left;
-    gap: 0.5rem;
-    border: 1px solid white;
-    border-radius: 0.5rem;
-    padding: 1rem;
-}
-
 /* Profile Lists */
 /********************************************************************************/
 
@@ -250,4 +202,124 @@
     gap: 1rem;
     justify-content: left;
     align-items: left;
+}
+
+/* List View*/
+/********************************************************************************/
+
+.list-title-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.list-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: left;
+}
+
+.list-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 25vh;
+    height: 50vh;
+}
+
+.list-item:hover {
+    border-color: var(--color-a);
+}
+
+.list-item a{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: hidden;
+    height: 100%;
+}
+
+.list-item img {
+    width: 100%;
+    height: 100%;
+    border-radius: 0.25rem;
+}
+
+.list-item p {
+    max-height: 6rem;
+
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-size: 100% 100%;
+    mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    mask-repeat: no-repeat;
+    mask-size: 100% 100%;
+}
+
+/* Movie View*/
+/********************************************************************************/
+
+.movie-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.movie-header img {
+    width: 25vh;
+    height: auto;
+}
+
+/* Review Input */
+/********************************************************************************/
+
+.review-input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 0.5rem;
+}
+
+.review-input-container form {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    gap: 0.5rem;
+}
+
+.review-input-container textarea {
+    padding: 1rem;
+}
+
+.review-input-container input[type="number"] {
+    width: fit-content;
+}
+
+.review-list-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    gap: 1rem;
+    padding: 1rem 0;
+}
+
+.review-list-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    gap: 0.5rem;
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    width: 100%;
 }

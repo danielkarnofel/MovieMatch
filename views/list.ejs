@@ -5,31 +5,42 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-	<h1><%= list.name %></h1>
-	<h2><%= list.description %></h2>
-	<a class="btn" href="/search">Add movie</a><br>
+	<section class="list-title-container">
+		<h1><%= list.name %></h1>
+		<h2><%= list.description %></h2>
+		<a class="btn" href="/search">Add movie</a>
+	</section>
 
-	<% if (list.movies.length == 0) { %>
-		<p>No movies added yet!</p>
-	<% } else { %>
-		<div class="gallery">
-		<% for (const movie of list.movies) { %>
-			<div class="highlight">
-				<a href="/movie/<%= movie.id %>"><img src="http://image.tmdb.org/t/p/w154<%= movie.poster %>" alt="<%= movie.title %>"></a>
-				<div class="highlight-text">
-					<h3><%= movie.title %></h3>
-					<p><%= movie.overview %></p>
+	<section>
+		<% if (list.movies.length == 0) { %>
+
+			<p>No movies added yet!</p>
+
+		<% } else { %>
+
+			<div class="list-items">
+			<% for (const movie of list.movies) { %>
+				<div class="list-item">
+
+					<a href="/movie/<%= movie.id %>">
+						<img src="http://image.tmdb.org/t/p/w500<%= movie.poster %>" alt="<%= movie.title %>">
+						<h3><%= movie.title %></h3>
+						<p><%= movie.overview %></p>
+					</a>
+
+					<form action="/api/list/remove/<%= movie.id %>" method="POST" style="display:inline;">
+						<input type="hidden" name="listId" value="<%= list.id %>">
+						<input type="hidden" name="movieTitle" value="<%= movie.title %>">
+						<button class="btn" type="submit" onclick="return confirm('Delete this movie?')">Delete</button>
+					</form>
+
 				</div>
+			<% } %>
 			</div>
-			<form action="/api/list/remove/<%= movie.id %>" method="POST" style="display:inline;">
-				<input type="hidden" name="listId" value="<%= list.id %>">
-				<input type="hidden" name="movieTitle" value="<%= movie.title %>">
-				<button class="btn" type="submit" onclick="return confirm('Delete this movie?')">Delete</button>
-			</form>
-		<% } %>
-		</div>
 
-	<% } %>
+		<% } %>
+	</section>
+
 </main>
 
 <%- include('partials/footer.ejs') %>

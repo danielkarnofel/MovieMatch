@@ -5,7 +5,7 @@
 <%- include('partials/header.ejs') %>
 
 <main>
-  <section class="highlight">
+  <section class="movie-header">
     <h1><%= dataMovie.title %></h1>
     <img src="https://image.tmdb.org/t/p/w500<%= dataMovie.poster_path %>" alt="<%= dataMovie.title %>">
     <p><%= dataMovie.overview %></p>
@@ -22,16 +22,19 @@
   </section>
   <% } %>
 
-  <section class="review-list-container">
-    <span class="review-list-header"><h2>Reviews - <span><%= dataMovie.vote_average %></span></h2>
+  <section>
+    <h2>Reviews</h2>
+    <h3>Average Rating: <%= dataMovie.vote_average %></h3>
+    <div  class="review-list-container">
     <% for (review of reviews) { %>
       <div class="review-item">
-        <p><%= review.rating %></p>
+        <p>Rating: <%= review.rating %></p>
         <p><%= review.content %></p>
         <% const author = users.find(user => user.id === review.user_id); %>
         <p>- <%= author.username %></p>
       </div>
     <% } %>
+    </div>
   </section>
 </main>
 
