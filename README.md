@@ -34,20 +34,11 @@ The app uses a MySQL database to store:
 Movie data is fetched on-demand from TMDB and is not permanently stored.
 
 > 📊 ERD: _See diagram below_  
-> ![ERD Diagram](./assets/erd.png) <!-- Replace with your actual path -->
+<img width="512" height="296" alt="erd" src="https://github.com/user-attachments/assets/982b31ed-4a26-470f-982b-c13c3bc380a4" />
 
 ## 🖼 Screenshots
 
-> Include screenshots of your app’s key pages below:
-
-- Home Page  
-  ![Home](./assets/home.png)
-
-- Movie Page  
-  ![Movie](./assets/movie.png)
-
-- Custom List  
-  ![List](./assets/list.png)
+> Coming soon...
 
 ## 🛠 Developed For
 
