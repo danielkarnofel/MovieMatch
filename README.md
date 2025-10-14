@@ -1,20 +1,20 @@
 # 🎬 MovieMatch
 
-MovieMatch is a web application that helps users discover, review, and organize movies. Users can explore trending films, browse by mood, create custom lists, and share their thoughts through ratings and reviews. Whether logged in or just browsing, MovieMatch offers an engaging and personalized movie discovery experience.
+MovieMatch is a web application that helps users discover, review, and organize movies. Users can explore trending films, browse by mood, create custom lists, and post ratings and reviews.
 
-## 🌟 Features
+## Features
 
-- 🔍 **Search Movies** – Find movies by title using TMDB's robust search API.
-- 🌈 **Mood-Based Recommendations** – Browse curated movie suggestions based on genre-tagged moods.
-- 📈 **Trending & Popular Lists** – Explore the latest trending and top-rated movies.
-- 📝 **User Reviews & Ratings** – Leave reviews and star ratings for individual movies.
-- 📂 **Custom Lists** – Logged-in users can create, edit, and manage personalized movie lists.
-- ✨ **Dynamic Home Page** – Displays different content for logged-in users (including personalized recommendations).
-- 💬 **Random Quotes** – Enjoy dynamic movie-themed quotes on the homepage via the Quotable API.
-- 🔐 **User Accounts** – Full support for account creation and login.
-- 👀 **Guest Access** – Many features are accessible without logging in.
+- **Search Movies** – Find movies by title using TMDB's search API.
+- **Mood-Based Recommendations** – Browse movie suggestions based on genre-tagged moods.
+- **Trending & Popular Lists** – Explore trending and top-rated movies.
+- **User Reviews & Ratings** – Leave reviews and star ratings for individual movies.
+- **Custom Lists** – Logged-in users can create, edit, and manage personalized movie lists.
+- **Dynamic Home Page** – Displays different content for logged-in users (including personalized recommendations).
+- **Random Quotes** – Dynamic movie-themed quotes on the homepage via the Quotable API.
+- **User Accounts** – Full support for account creation and login.
+- **Guest Access** – Many features are accessible without logging in.
 
-## 🧰 Tech Stack
+## Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript (with server-rendered views)
 - **Backend:** Node.js, Express
@@ -23,7 +23,7 @@ MovieMatch is a web application that helps users discover, review, and organize 
   - [TMDB API](https://www.themoviedb.org/documentation/api) – for movie data
   - [Quotable API](https://github.com/lukePeavey/quotable) – for random quotes
 
-## 🗂 Database
+## Database
 
 The app uses a MySQL database to store:
 
@@ -42,7 +42,7 @@ Movie data is fetched on-demand from TMDB and is not permanently stored.
 
 ## 🛠 Developed For
 
-This project was created by a team (including [Your Name]) as the final project for **CST 336 – Internet Programming** at **California State University, Monterey Bay (CSUMB)**.
+This was a team project  for **CST 336 – Internet Programming** at **California State University, Monterey Bay (CSUMB)**.
 
 ## 🙌 Acknowledgments
 
