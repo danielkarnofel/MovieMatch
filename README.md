@@ -1,4 +1,4 @@
-# 🎬 MovieMatch
+# MovieMatch
 
 MovieMatch is a web application that helps users discover, review, and organize movies. Users can explore trending films, browse by mood, create custom lists, and post ratings and reviews.
 
@@ -33,20 +33,14 @@ The app uses a MySQL database to store:
 
 Movie data is fetched on-demand from TMDB and is not permanently stored.
 
-> 📊 ERD: _See diagram below_  
+> ERD: _See diagram below_  
 <img width="512" height="296" alt="erd" src="https://github.com/user-attachments/assets/982b31ed-4a26-470f-982b-c13c3bc380a4" />
 
-## 🖼 Screenshots
+## Screenshots
 
 > Coming soon...
 
-## 🛠 Developed For
+## Developed For
 
 This was a team project  for **CST 336 – Internet Programming** at **California State University, Monterey Bay (CSUMB)**.
-
-## 🙌 Acknowledgments
-
-- [TMDB](https://www.themoviedb.org/) for the movie data API.
-- [Quotable](https://github.com/lukePeavey/quotable) for providing random quotes.
-- CSUMB for support and guidance throughout the course.
 
