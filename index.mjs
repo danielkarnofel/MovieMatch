@@ -36,10 +36,10 @@ function isAuthenticated(req, res, next) {
 /* Database connection */
 /****************************************************************************************************/
 const pool = mysql.createPool({
-    host: "danielkarnofel.tech",
-    user: "danielk1_webuser",
-    password: "CSUMB-cst336",
-    database: "danielk1_moviematch",
+    host: "cig4l2op6r0fxymw.cbetxkdyhwsb.us-east-1.rds.amazonaws.com",
+    user: "fe4u1n62ai2cazw2",
+    password: "tfvzbuliiz8z7aoz",
+    database: "rd7ofllu2ax0jl3h",
     connectionLimit: 10,
     waitForConnections: true
 });
